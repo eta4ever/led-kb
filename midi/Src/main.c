@@ -7,8 +7,11 @@
 #include "usbdrv.h"
 #include "oddebug.h"
 
-#include "descriptor.h"
+#include "descriptor.h" // вынес сюда громоздкие константы дескрипторов
 
+/* ------------------------------------------------------------------------- */
+/* ----------------------------- USB interface ----------------------------- */
+/* ------------------------------------------------------------------------- */
 uchar usbFunctionDescriptor(usbRequest_t * rq) {
   if (rq->wValue.bytes[1] == USBDESCR_DEVICE) {
     usbMsgPtr = (uchar *) deviceDescrMIDI;
@@ -18,11 +21,6 @@ uchar usbFunctionDescriptor(usbRequest_t * rq) {
     return sizeof(configDescrMIDI);
   }
 }
-
-
-/* ------------------------------------------------------------------------- */
-/* ----------------------------- USB interface ----------------------------- */
-/* ------------------------------------------------------------------------- */
 
 static uchar sendEmptyFrame;
 
@@ -38,7 +36,6 @@ uchar usbFunctionSetup(uchar data[8]) {
   }
   return 0xff;
 }
-
 
 /*---------------------------------------------------------------------------*/
 /* usbFunctionRead                                                           */
@@ -67,7 +64,6 @@ uchar usbFunctionWrite(uchar * data, uchar len)
 	return 1;
 }
 
-
 /*---------------------------------------------------------------------------*/
 /* usbFunctionWriteOut                                                       */
 /*                                                                           */
@@ -79,8 +75,6 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 {
 //
 }
-
-
 
 /*---------------------------------------------------------------------------*/
 /* hardwareInit                                                              */
@@ -148,7 +142,6 @@ static uchar keyPressed(void)
 	}
 	return 0;
 }
-
 
 
 int main(void)
