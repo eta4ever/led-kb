@@ -16,6 +16,9 @@ uchar curr_state = 0; // текущее состояние строки матр
 
 uchar midiMsg[4] = { 0x09, 0x90, 0x00, 0x00 }; // MIDI-сообщение. Только Note On. Изменяются 3-4 байты (key и velocity)
 
+uchar lastkey = 0;
+uchar currkey = 0;
+
 /* ------------------------------------------------------------------------- */
 /* ----------------------------- USB interface ----------------------------- */
 /* ------------------------------------------------------------------------- */
@@ -114,6 +117,13 @@ static void hardwareInit(void)
 	USBDDR = 0;		/*  remove USB reset condition */
 #endif
 
+
+DDRB |= 0b00010101; // PB4,2,0 - выходы
+DDRD |= 0b01000000; // PD6 выход
+DDRB &= 0b11011111; // PB5 вход
+DDRC &= 0b11101011; // PC4,2 - входы
+DDRD &= 0b11110101; // PD3,1 - входы
+
 }
 
 int main(void)
@@ -131,28 +141,72 @@ int main(void)
 		wdt_reset();
 		usbPoll();
 
-		// сканирование строк кнопок
-		for (uchar row_num = 0; row_num < ROWCOUNT; row_num ++){
+		/* Для сканирования матрицы кнопок. ROW+
+		 * ROW0 PB4
+		 * ROW1 PB2
+		 * ROW2 PD6
+		 * ROW3 PB0
+		 *
+		 * COL0 PB5
+		 * COL1 PC2
+		 * COL2 PC4
+		 * COL3 PD3
+		 * COL4 PD1
+		 */
 
-			curr_state = row_scan(row_num);
+		PORTB |= 0b00010000;
+		curr_state = 0;
 
-			for (uchar bit=0; bit< COLCOUNT; bit++){ // побитовое сравнение текущего состояния строки с прошлым
-				uchar curr_bit = (curr_state >> bit) & 1;
-				uchar last_bit = (last_state[row_num] >> bit) & 1;
+		if (PINB & 0b00100000) curr_state |= 0b01;
+		if (PINC & 0b00000100) curr_state |= 0b10;
 
-				if (curr_bit ^ last_bit) continue; // биты равны, переход к следующей итерации
+		if ( (curr_state & 0b01) != (last_state[0] & 0b01) ){
 
-				if (curr_bit) midiMsg[3] = 0x7f; // нажатие: код velocity 0x7f
-				else midiMsg[3] = 0x00; // отпускание: код velocity 0x00
+			midiMsg[2] = 0;
+			if (curr_state & 0b01) midiMsg[3] = 0x7f;
+			else midiMsg[3] = 0;
 
-				midiMsg[2] = row_num*COLCOUNT + bit; // номер ноты
-
-				sendEmptyFrame = 0; // хз
-				if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4); // отправка MIDI-сообщения
-			}
-
-			last_state[row_num] = curr_state;
+			if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4);
 		}
+
+		if ( (curr_state & 0b10) != (last_state[0] & 0b10) ){
+
+			midiMsg[2] = 1;
+			if (curr_state & 0b10) midiMsg[3] =  0x7f;
+			else midiMsg[3] = 0;
+
+			if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4);
+		}
+
+		last_state[0] = curr_state;
+
+		PORTB &= 0b11101111;
+		PORTB |= 0b00000100;
+		curr_state = 0;
+
+		if (PINB & 0b00100000) curr_state |= 0b01;
+		if (PINC & 0b00000100) curr_state |= 0b10;
+
+		if ( (curr_state & 0b01) != (last_state[1] & 0b01) ){
+
+			midiMsg[2] = 2;
+			if (curr_state & 0b01) midiMsg[3] = 0x7f;
+			else midiMsg[3] = 0;
+
+			if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4);
+		}
+
+		if ( (curr_state & 0b10) != (last_state[1] & 0b10) ){
+
+			midiMsg[2] = 3;
+			if (curr_state & 0b10) midiMsg[3] =  0x7f;
+			else midiMsg[3] = 0x0;
+
+			if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4);
+		}
+
+		last_state[1] = curr_state;
+		PORTB &= 0b11111011;
 
 	}
 	return 0;

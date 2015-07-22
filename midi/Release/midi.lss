@@ -3,13 +3,13 @@ midi.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         000007d8  00000000  00000000  00000094  2**1
+  0 .text         00000830  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         00000002  00800060  000007d8  0000086c  2**0
+  1 .data         00000006  00800060  00000830  000008c4  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .bss          00000038  00800062  00800062  0000086e  2**0
+  2 .bss          0000003d  00800066  00800066  000008ca  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  0000086e  2**0
+  3 .comment      00000030  00000000  00000000  000008ca  2**0
                   CONTENTS, READONLY
 
 Disassembly of section .text:
@@ -79,18 +79,18 @@ Disassembly of section .text:
   e4:	10 e0       	ldi	r17, 0x00	; 0
   e6:	a0 e6       	ldi	r26, 0x60	; 96
   e8:	b0 e0       	ldi	r27, 0x00	; 0
-  ea:	e8 ed       	ldi	r30, 0xD8	; 216
-  ec:	f7 e0       	ldi	r31, 0x07	; 7
+  ea:	e0 e3       	ldi	r30, 0x30	; 48
+  ec:	f8 e0       	ldi	r31, 0x08	; 8
   ee:	02 c0       	rjmp	.+4      	; 0xf4 <__do_copy_data+0x10>
   f0:	05 90       	lpm	r0, Z+
   f2:	0d 92       	st	X+, r0
-  f4:	a2 36       	cpi	r26, 0x62	; 98
+  f4:	a6 36       	cpi	r26, 0x66	; 102
   f6:	b1 07       	cpc	r27, r17
   f8:	d9 f7       	brne	.-10     	; 0xf0 <__do_copy_data+0xc>
 
 000000fa <__do_clear_bss>:
   fa:	20 e0       	ldi	r18, 0x00	; 0
-  fc:	a2 e6       	ldi	r26, 0x62	; 98
+  fc:	a6 e6       	ldi	r26, 0x66	; 102
   fe:	b0 e0       	ldi	r27, 0x00	; 0
  100:	01 c0       	rjmp	.+2      	; 0x104 <.do_clear_bss_start>
 
@@ -98,11 +98,11 @@ Disassembly of section .text:
  102:	1d 92       	st	X+, r1
 
 00000104 <.do_clear_bss_start>:
- 104:	aa 39       	cpi	r26, 0x9A	; 154
+ 104:	a3 3a       	cpi	r26, 0xA3	; 163
  106:	b2 07       	cpc	r27, r18
  108:	e1 f7       	brne	.-8      	; 0x102 <.do_clear_bss_loop>
- 10a:	db d2       	rcall	.+1462   	; 0x6c2 <main>
- 10c:	63 c3       	rjmp	.+1734   	; 0x7d4 <_exit>
+ 10a:	e8 d2       	rcall	.+1488   	; 0x6dc <main>
+ 10c:	8f c3       	rjmp	.+1822   	; 0x82c <_exit>
 
 0000010e <__bad_interrupt>:
  10e:	78 cf       	rjmp	.-272    	; 0x0 <__vectors>
@@ -174,9 +174,9 @@ Disassembly of section .text:
 
 0000016a <foundK>:
  16a:	6f 93       	push	r22
- 16c:	c0 91 7d 00 	lds	r28, 0x007D
+ 16c:	c0 91 86 00 	lds	r28, 0x0086
  170:	dd 27       	eor	r29, r29
- 172:	cc 57       	subi	r28, 0x7C	; 124
+ 172:	c3 57       	subi	r28, 0x73	; 115
  174:	df 4f       	sbci	r29, 0xFF	; 255
  176:	2f 93       	push	r18
  178:	65 e5       	ldi	r22, 0x55	; 85
@@ -317,7 +317,7 @@ Disassembly of section .text:
  246:	21 f1       	breq	.+72     	; 0x290 <handleData>
  248:	0b 34       	cpi	r16, 0x4B	; 75
  24a:	11 f1       	breq	.+68     	; 0x290 <handleData>
- 24c:	20 91 7b 00 	lds	r18, 0x007B
+ 24c:	20 91 84 00 	lds	r18, 0x0084
  250:	19 81       	ldd	r17, Y+1	; 0x01
  252:	11 0f       	add	r17, r17
  254:	12 13       	cpse	r17, r18
@@ -337,7 +337,7 @@ Disassembly of section .text:
  26c:	04 2f       	mov	r16, r20
 
 0000026e <storeTokenAndReturn>:
- 26e:	00 93 82 00 	sts	0x0082, r16
+ 26e:	00 93 8b 00 	sts	0x008B, r16
 
 00000272 <doReturn>:
  272:	3f 91       	pop	r19
@@ -359,24 +359,24 @@ Disassembly of section .text:
  28e:	18 95       	reti
 
 00000290 <handleData>:
- 290:	20 91 82 00 	lds	r18, 0x0082
+ 290:	20 91 8b 00 	lds	r18, 0x008B
  294:	22 23       	and	r18, r18
  296:	69 f3       	breq	.-38     	; 0x272 <doReturn>
- 298:	10 91 80 00 	lds	r17, 0x0080
+ 298:	10 91 89 00 	lds	r17, 0x0089
  29c:	11 23       	and	r17, r17
  29e:	91 f5       	brne	.+100    	; 0x304 <sendNakAndReti>
  2a0:	34 30       	cpi	r19, 0x04	; 4
  2a2:	92 f1       	brmi	.+100    	; 0x308 <sendAckAndReti>
- 2a4:	30 93 80 00 	sts	0x0080, r19
- 2a8:	20 93 7c 00 	sts	0x007C, r18
- 2ac:	10 91 7d 00 	lds	r17, 0x007D
+ 2a4:	30 93 89 00 	sts	0x0089, r19
+ 2a8:	20 93 85 00 	sts	0x0085, r18
+ 2ac:	10 91 86 00 	lds	r17, 0x0086
  2b0:	3b e0       	ldi	r19, 0x0B	; 11
  2b2:	31 1b       	sub	r19, r17
- 2b4:	30 93 7d 00 	sts	0x007D, r19
+ 2b4:	30 93 86 00 	sts	0x0086, r19
  2b8:	27 c0       	rjmp	.+78     	; 0x308 <sendAckAndReti>
 
 000002ba <handleIn>:
- 2ba:	00 91 80 00 	lds	r16, 0x0080
+ 2ba:	00 91 89 00 	lds	r16, 0x0089
  2be:	01 30       	cpi	r16, 0x01	; 1
  2c0:	0c f5       	brge	.+66     	; 0x304 <sendNakAndReti>
  2c2:	0a e5       	ldi	r16, 0x5A	; 90
@@ -386,16 +386,16 @@ Disassembly of section .text:
  2cc:	34 fd       	sbrc	r19, 4
  2ce:	1d c0       	rjmp	.+58     	; 0x30a <sendCntAndReti>
  2d0:	00 93 61 00 	sts	0x0061, r16
- 2d4:	c4 e6       	ldi	r28, 0x64	; 100
+ 2d4:	cd e6       	ldi	r28, 0x6D	; 109
  2d6:	d0 e0       	ldi	r29, 0x00	; 0
  2d8:	1c c0       	rjmp	.+56     	; 0x312 <usbSendAndReti>
 
 000002da <handleIn1>:
- 2da:	30 91 6f 00 	lds	r19, 0x006F
+ 2da:	30 91 78 00 	lds	r19, 0x0078
  2de:	34 fd       	sbrc	r19, 4
  2e0:	14 c0       	rjmp	.+40     	; 0x30a <sendCntAndReti>
- 2e2:	00 93 6f 00 	sts	0x006F, r16
- 2e6:	c0 e7       	ldi	r28, 0x70	; 112
+ 2e2:	00 93 78 00 	sts	0x0078, r16
+ 2e6:	c9 e7       	ldi	r28, 0x79	; 121
  2e8:	d0 e0       	ldi	r29, 0x00	; 0
  2ea:	13 c0       	rjmp	.+38     	; 0x312 <usbSendAndReti>
 
@@ -480,13 +480,13 @@ Disassembly of section .text:
  356:	3a 95       	dec	r19
  358:	19 f7       	brne	.-58     	; 0x320 <txByteLoop>
  35a:	0b 7e       	andi	r16, 0xEB	; 235
- 35c:	10 91 81 00 	lds	r17, 0x0081
+ 35c:	10 91 8a 00 	lds	r17, 0x008A
  360:	11 0f       	add	r17, r17
  362:	c6 51       	subi	r28, 0x16	; 22
  364:	d0 40       	sbci	r29, 0x00	; 0
  366:	02 bb       	out	0x12, r16	; 18
  368:	11 f0       	breq	.+4      	; 0x36e <skipAddrAssign>
- 36a:	10 93 7b 00 	sts	0x007B, r17
+ 36a:	10 93 84 00 	sts	0x0084, r17
 
 0000036e <skipAddrAssign>:
  36e:	10 e4       	ldi	r17, 0x40	; 64
@@ -509,21 +509,21 @@ Disassembly of section .text:
 0000038a <usbSetInterrupt>:
  38a:	cf 93       	push	r28
  38c:	c6 2f       	mov	r28, r22
- 38e:	20 91 6f 00 	lds	r18, 0x006F
+ 38e:	20 91 78 00 	lds	r18, 0x0078
  392:	2e 31       	cpi	r18, 0x1E	; 30
  394:	f1 f0       	breq	.+60     	; 0x3d2 <usbSetInterrupt+0x48>
- 396:	20 91 6f 00 	lds	r18, 0x006F
+ 396:	20 91 78 00 	lds	r18, 0x0078
  39a:	24 ff       	sbrs	r18, 4
  39c:	07 c0       	rjmp	.+14     	; 0x3ac <usbSetInterrupt+0x22>
- 39e:	20 91 70 00 	lds	r18, 0x0070
+ 39e:	20 91 79 00 	lds	r18, 0x0079
  3a2:	38 e8       	ldi	r19, 0x88	; 136
  3a4:	23 27       	eor	r18, r19
- 3a6:	20 93 70 00 	sts	0x0070, r18
+ 3a6:	20 93 79 00 	sts	0x0079, r18
  3aa:	03 c0       	rjmp	.+6      	; 0x3b2 <usbSetInterrupt+0x28>
  3ac:	2a e5       	ldi	r18, 0x5A	; 90
- 3ae:	20 93 6f 00 	sts	0x006F, r18
+ 3ae:	20 93 78 00 	sts	0x0078, r18
  3b2:	dc 01       	movw	r26, r24
- 3b4:	e1 e7       	ldi	r30, 0x71	; 113
+ 3b4:	ea e7       	ldi	r30, 0x7A	; 122
  3b6:	f0 e0       	ldi	r31, 0x00	; 0
  3b8:	8c 2f       	mov	r24, r28
  3ba:	8e 0f       	add	r24, r30
@@ -532,33 +532,33 @@ Disassembly of section .text:
  3c0:	8e 13       	cpse	r24, r30
  3c2:	fc cf       	rjmp	.-8      	; 0x3bc <usbSetInterrupt+0x32>
  3c4:	6c 2f       	mov	r22, r28
- 3c6:	81 e7       	ldi	r24, 0x71	; 113
+ 3c6:	8a e7       	ldi	r24, 0x7A	; 122
  3c8:	90 e0       	ldi	r25, 0x00	; 0
  3ca:	b7 de       	rcall	.-658    	; 0x13a <usbCrc16Append>
  3cc:	cc 5f       	subi	r28, 0xFC	; 252
- 3ce:	c0 93 6f 00 	sts	0x006F, r28
+ 3ce:	c0 93 78 00 	sts	0x0078, r28
  3d2:	cf 91       	pop	r28
  3d4:	08 95       	ret
 
 000003d6 <usbPoll>:
  3d6:	cf 93       	push	r28
  3d8:	df 93       	push	r29
- 3da:	60 91 80 00 	lds	r22, 0x0080
+ 3da:	60 91 89 00 	lds	r22, 0x0089
  3de:	63 50       	subi	r22, 0x03	; 3
  3e0:	67 fd       	sbrc	r22, 7
  3e2:	ca c0       	rjmp	.+404    	; 0x578 <__stack+0x119>
- 3e4:	80 91 7d 00 	lds	r24, 0x007D
+ 3e4:	80 91 86 00 	lds	r24, 0x0086
  3e8:	cc e0       	ldi	r28, 0x0C	; 12
  3ea:	d0 e0       	ldi	r29, 0x00	; 0
  3ec:	c8 1b       	sub	r28, r24
  3ee:	d1 09       	sbc	r29, r1
- 3f0:	cc 57       	subi	r28, 0x7C	; 124
+ 3f0:	c3 57       	subi	r28, 0x73	; 115
  3f2:	df 4f       	sbci	r29, 0xFF	; 255
- 3f4:	80 91 7c 00 	lds	r24, 0x007C
+ 3f4:	80 91 85 00 	lds	r24, 0x0085
  3f8:	80 31       	cpi	r24, 0x10	; 16
  3fa:	18 f4       	brcc	.+6      	; 0x402 <usbPoll+0x2c>
  3fc:	ce 01       	movw	r24, r28
- 3fe:	60 d1       	rcall	.+704    	; 0x6c0 <usbFunctionWriteOut>
+ 3fe:	6d d1       	rcall	.+730    	; 0x6da <usbFunctionWriteOut>
  400:	b9 c0       	rjmp	.+370    	; 0x574 <__stack+0x115>
  402:	8d 32       	cpi	r24, 0x2D	; 45
  404:	09 f0       	breq	.+2      	; 0x408 <usbPoll+0x32>
@@ -567,20 +567,20 @@ Disassembly of section .text:
  40a:	09 f0       	breq	.+2      	; 0x40e <usbPoll+0x38>
  40c:	b3 c0       	rjmp	.+358    	; 0x574 <__stack+0x115>
  40e:	83 ec       	ldi	r24, 0xC3	; 195
- 410:	80 93 64 00 	sts	0x0064, r24
+ 410:	80 93 6d 00 	sts	0x006D, r24
  414:	8a e5       	ldi	r24, 0x5A	; 90
  416:	80 93 61 00 	sts	0x0061, r24
- 41a:	10 92 62 00 	sts	0x0062, r1
+ 41a:	10 92 66 00 	sts	0x0066, r1
  41e:	38 81       	ld	r19, Y
  420:	83 2f       	mov	r24, r19
  422:	80 76       	andi	r24, 0x60	; 96
  424:	19 f0       	breq	.+6      	; 0x42c <usbPoll+0x56>
  426:	ce 01       	movw	r24, r28
- 428:	32 d1       	rcall	.+612    	; 0x68e <usbFunctionSetup>
+ 428:	3f d1       	rcall	.+638    	; 0x6a8 <usbFunctionSetup>
  42a:	82 c0       	rjmp	.+260    	; 0x530 <__stack+0xd1>
  42c:	9a 81       	ldd	r25, Y+2	; 0x02
  42e:	2c 81       	ldd	r18, Y+4	; 0x04
- 430:	10 92 6d 00 	sts	0x006D, r1
+ 430:	10 92 76 00 	sts	0x0076, r1
  434:	89 81       	ldd	r24, Y+1	; 0x01
  436:	81 11       	cpse	r24, r1
  438:	13 c0       	rjmp	.+38     	; 0x460 <__stack+0x1>
@@ -589,14 +589,14 @@ Disassembly of section .text:
  43e:	51 f4       	brne	.+20     	; 0x454 <usbPoll+0x7e>
  440:	21 38       	cpi	r18, 0x81	; 129
  442:	41 f4       	brne	.+16     	; 0x454 <usbPoll+0x7e>
- 444:	90 91 6f 00 	lds	r25, 0x006F
+ 444:	90 91 78 00 	lds	r25, 0x0078
  448:	81 e0       	ldi	r24, 0x01	; 1
  44a:	9e 31       	cpi	r25, 0x1E	; 30
  44c:	09 f0       	breq	.+2      	; 0x450 <usbPoll+0x7a>
  44e:	80 e0       	ldi	r24, 0x00	; 0
- 450:	80 93 6d 00 	sts	0x006D, r24
- 454:	10 92 6e 00 	sts	0x006E, r1
- 458:	2d e6       	ldi	r18, 0x6D	; 109
+ 450:	80 93 76 00 	sts	0x0076, r24
+ 454:	10 92 77 00 	sts	0x0077, r1
+ 458:	26 e7       	ldi	r18, 0x76	; 118
  45a:	30 e0       	ldi	r19, 0x00	; 0
  45c:	82 e0       	ldi	r24, 0x02	; 2
  45e:	64 c0       	rjmp	.+200    	; 0x528 <__stack+0xc9>
@@ -614,13 +614,13 @@ Disassembly of section .text:
  476:	8a e5       	ldi	r24, 0x5A	; 90
  478:	01 c0       	rjmp	.+2      	; 0x47c <__stack+0x1d>
  47a:	8e e1       	ldi	r24, 0x1E	; 30
- 47c:	80 93 6f 00 	sts	0x006F, r24
+ 47c:	80 93 78 00 	sts	0x0078, r24
  480:	8b e4       	ldi	r24, 0x4B	; 75
- 482:	80 93 70 00 	sts	0x0070, r24
+ 482:	80 93 79 00 	sts	0x0079, r24
  486:	4d c0       	rjmp	.+154    	; 0x522 <__stack+0xc3>
  488:	85 30       	cpi	r24, 0x05	; 5
  48a:	19 f4       	brne	.+6      	; 0x492 <__stack+0x33>
- 48c:	90 93 81 00 	sts	0x0081, r25
+ 48c:	90 93 8a 00 	sts	0x008A, r25
  490:	48 c0       	rjmp	.+144    	; 0x522 <__stack+0xc3>
  492:	86 30       	cpi	r24, 0x06	; 6
  494:	69 f5       	brne	.+90     	; 0x4f0 <__stack+0x91>
@@ -630,7 +630,7 @@ Disassembly of section .text:
  49c:	82 30       	cpi	r24, 0x02	; 2
  49e:	19 f4       	brne	.+6      	; 0x4a6 <__stack+0x47>
  4a0:	ce 01       	movw	r24, r28
- 4a2:	e1 d0       	rcall	.+450    	; 0x666 <usbFunctionDescriptor>
+ 4a2:	ee d0       	rcall	.+476    	; 0x680 <usbFunctionDescriptor>
  4a4:	21 c0       	rjmp	.+66     	; 0x4e8 <__stack+0x89>
  4a6:	83 30       	cpi	r24, 0x03	; 3
  4a8:	f1 f4       	brne	.+60     	; 0x4e6 <__stack+0x87>
@@ -638,64 +638,64 @@ Disassembly of section .text:
  4ac:	08 c0       	rjmp	.+16     	; 0x4be <__stack+0x5f>
  4ae:	8c e5       	ldi	r24, 0x5C	; 92
  4b0:	90 e0       	ldi	r25, 0x00	; 0
- 4b2:	90 93 7f 00 	sts	0x007F, r25
- 4b6:	80 93 7e 00 	sts	0x007E, r24
+ 4b2:	90 93 88 00 	sts	0x0088, r25
+ 4b6:	80 93 87 00 	sts	0x0087, r24
  4ba:	84 e0       	ldi	r24, 0x04	; 4
  4bc:	15 c0       	rjmp	.+42     	; 0x4e8 <__stack+0x89>
  4be:	91 30       	cpi	r25, 0x01	; 1
  4c0:	41 f4       	brne	.+16     	; 0x4d2 <__stack+0x73>
  4c2:	88 e3       	ldi	r24, 0x38	; 56
  4c4:	90 e0       	ldi	r25, 0x00	; 0
- 4c6:	90 93 7f 00 	sts	0x007F, r25
- 4ca:	80 93 7e 00 	sts	0x007E, r24
+ 4c6:	90 93 88 00 	sts	0x0088, r25
+ 4ca:	80 93 87 00 	sts	0x0087, r24
  4ce:	84 e2       	ldi	r24, 0x24	; 36
  4d0:	0b c0       	rjmp	.+22     	; 0x4e8 <__stack+0x89>
  4d2:	92 30       	cpi	r25, 0x02	; 2
  4d4:	41 f4       	brne	.+16     	; 0x4e6 <__stack+0x87>
  4d6:	86 e2       	ldi	r24, 0x26	; 38
  4d8:	90 e0       	ldi	r25, 0x00	; 0
- 4da:	90 93 7f 00 	sts	0x007F, r25
- 4de:	80 93 7e 00 	sts	0x007E, r24
+ 4da:	90 93 88 00 	sts	0x0088, r25
+ 4de:	80 93 87 00 	sts	0x0087, r24
  4e2:	82 e1       	ldi	r24, 0x12	; 18
  4e4:	01 c0       	rjmp	.+2      	; 0x4e8 <__stack+0x89>
  4e6:	80 e0       	ldi	r24, 0x00	; 0
  4e8:	90 e4       	ldi	r25, 0x40	; 64
- 4ea:	90 93 62 00 	sts	0x0062, r25
+ 4ea:	90 93 66 00 	sts	0x0066, r25
  4ee:	20 c0       	rjmp	.+64     	; 0x530 <__stack+0xd1>
  4f0:	88 30       	cpi	r24, 0x08	; 8
  4f2:	81 f0       	breq	.+32     	; 0x514 <__stack+0xb5>
  4f4:	89 30       	cpi	r24, 0x09	; 9
  4f6:	19 f4       	brne	.+6      	; 0x4fe <__stack+0x9f>
- 4f8:	90 93 83 00 	sts	0x0083, r25
+ 4f8:	90 93 8c 00 	sts	0x008C, r25
  4fc:	07 c0       	rjmp	.+14     	; 0x50c <__stack+0xad>
  4fe:	8a 30       	cpi	r24, 0x0A	; 10
  500:	61 f0       	breq	.+24     	; 0x51a <__stack+0xbb>
  502:	8b 30       	cpi	r24, 0x0B	; 11
  504:	71 f4       	brne	.+28     	; 0x522 <__stack+0xc3>
  506:	8b e4       	ldi	r24, 0x4B	; 75
- 508:	80 93 70 00 	sts	0x0070, r24
+ 508:	80 93 79 00 	sts	0x0079, r24
  50c:	8a e5       	ldi	r24, 0x5A	; 90
- 50e:	80 93 6f 00 	sts	0x006F, r24
+ 50e:	80 93 78 00 	sts	0x0078, r24
  512:	07 c0       	rjmp	.+14     	; 0x522 <__stack+0xc3>
- 514:	23 e8       	ldi	r18, 0x83	; 131
+ 514:	2c e8       	ldi	r18, 0x8C	; 140
  516:	30 e0       	ldi	r19, 0x00	; 0
  518:	02 c0       	rjmp	.+4      	; 0x51e <__stack+0xbf>
- 51a:	2d e6       	ldi	r18, 0x6D	; 109
+ 51a:	26 e7       	ldi	r18, 0x76	; 118
  51c:	30 e0       	ldi	r19, 0x00	; 0
  51e:	81 e0       	ldi	r24, 0x01	; 1
  520:	03 c0       	rjmp	.+6      	; 0x528 <__stack+0xc9>
- 522:	2d e6       	ldi	r18, 0x6D	; 109
+ 522:	26 e7       	ldi	r18, 0x76	; 118
  524:	30 e0       	ldi	r19, 0x00	; 0
  526:	80 e0       	ldi	r24, 0x00	; 0
- 528:	30 93 7f 00 	sts	0x007F, r19
- 52c:	20 93 7e 00 	sts	0x007E, r18
+ 528:	30 93 88 00 	sts	0x0088, r19
+ 52c:	20 93 87 00 	sts	0x0087, r18
  530:	8f 3f       	cpi	r24, 0xFF	; 255
  532:	39 f4       	brne	.+14     	; 0x542 <__stack+0xe3>
  534:	98 81       	ld	r25, Y
  536:	97 fd       	sbrc	r25, 7
  538:	8e 81       	ldd	r24, Y+6	; 0x06
  53a:	90 e8       	ldi	r25, 0x80	; 128
- 53c:	90 93 62 00 	sts	0x0062, r25
+ 53c:	90 93 66 00 	sts	0x0066, r25
  540:	07 c0       	rjmp	.+14     	; 0x550 <__stack+0xf1>
  542:	9f 81       	ldd	r25, Y+7	; 0x07
  544:	91 11       	cpse	r25, r1
@@ -706,11 +706,11 @@ Disassembly of section .text:
  54e:	89 2f       	mov	r24, r25
  550:	80 93 60 00 	sts	0x0060, r24
  554:	0f c0       	rjmp	.+30     	; 0x574 <__stack+0x115>
- 556:	80 91 62 00 	lds	r24, 0x0062
+ 556:	80 91 66 00 	lds	r24, 0x0066
  55a:	87 ff       	sbrs	r24, 7
  55c:	0b c0       	rjmp	.+22     	; 0x574 <__stack+0x115>
  55e:	ce 01       	movw	r24, r28
- 560:	ad d0       	rcall	.+346    	; 0x6bc <usbFunctionWrite>
+ 560:	ba d0       	rcall	.+372    	; 0x6d6 <usbFunctionWrite>
  562:	8f 3f       	cpi	r24, 0xFF	; 255
  564:	21 f4       	brne	.+8      	; 0x56e <__stack+0x10f>
  566:	8e e1       	ldi	r24, 0x1E	; 30
@@ -718,7 +718,7 @@ Disassembly of section .text:
  56c:	03 c0       	rjmp	.+6      	; 0x574 <__stack+0x115>
  56e:	81 11       	cpse	r24, r1
  570:	10 92 60 00 	sts	0x0060, r1
- 574:	10 92 80 00 	sts	0x0080, r1
+ 574:	10 92 89 00 	sts	0x0089, r1
  578:	80 91 61 00 	lds	r24, 0x0061
  57c:	84 ff       	sbrs	r24, 4
  57e:	56 c0       	rjmp	.+172    	; 0x62c <__stack+0x1cd>
@@ -732,28 +732,28 @@ Disassembly of section .text:
  590:	c8 e0       	ldi	r28, 0x08	; 8
  592:	8c 1b       	sub	r24, r28
  594:	80 93 60 00 	sts	0x0060, r24
- 598:	80 91 64 00 	lds	r24, 0x0064
+ 598:	80 91 6d 00 	lds	r24, 0x006D
  59c:	98 e8       	ldi	r25, 0x88	; 136
  59e:	89 27       	eor	r24, r25
- 5a0:	80 93 64 00 	sts	0x0064, r24
+ 5a0:	80 93 6d 00 	sts	0x006D, r24
  5a4:	cc 23       	and	r28, r28
  5a6:	89 f1       	breq	.+98     	; 0x60a <__stack+0x1ab>
- 5a8:	80 91 62 00 	lds	r24, 0x0062
+ 5a8:	80 91 66 00 	lds	r24, 0x0066
  5ac:	87 ff       	sbrs	r24, 7
  5ae:	08 c0       	rjmp	.+16     	; 0x5c0 <__stack+0x161>
  5b0:	6c 2f       	mov	r22, r28
- 5b2:	85 e6       	ldi	r24, 0x65	; 101
+ 5b2:	8e e6       	ldi	r24, 0x6E	; 110
  5b4:	90 e0       	ldi	r25, 0x00	; 0
- 5b6:	78 d0       	rcall	.+240    	; 0x6a8 <usbFunctionRead>
+ 5b6:	85 d0       	rcall	.+266    	; 0x6c2 <usbFunctionRead>
  5b8:	c8 2f       	mov	r28, r24
  5ba:	89 30       	cpi	r24, 0x09	; 9
  5bc:	88 f5       	brcc	.+98     	; 0x620 <__stack+0x1c1>
  5be:	25 c0       	rjmp	.+74     	; 0x60a <__stack+0x1ab>
- 5c0:	40 91 7e 00 	lds	r20, 0x007E
- 5c4:	50 91 7f 00 	lds	r21, 0x007F
+ 5c0:	40 91 87 00 	lds	r20, 0x0087
+ 5c4:	50 91 88 00 	lds	r21, 0x0088
  5c8:	86 ff       	sbrs	r24, 6
  5ca:	0b c0       	rjmp	.+22     	; 0x5e2 <__stack+0x183>
- 5cc:	a5 e6       	ldi	r26, 0x65	; 101
+ 5cc:	ae e6       	ldi	r26, 0x6E	; 110
  5ce:	b0 e0       	ldi	r27, 0x00	; 0
  5d0:	fa 01       	movw	r30, r20
  5d2:	8c 2f       	mov	r24, r28
@@ -765,7 +765,7 @@ Disassembly of section .text:
  5de:	fb cf       	rjmp	.-10     	; 0x5d6 <__stack+0x177>
  5e0:	09 c0       	rjmp	.+18     	; 0x5f4 <__stack+0x195>
  5e2:	da 01       	movw	r26, r20
- 5e4:	e5 e6       	ldi	r30, 0x65	; 101
+ 5e4:	ee e6       	ldi	r30, 0x6E	; 110
  5e6:	f0 e0       	ldi	r31, 0x00	; 0
  5e8:	8c 2f       	mov	r24, r28
  5ea:	8e 0f       	add	r24, r30
@@ -780,10 +780,10 @@ Disassembly of section .text:
  5fc:	3f 4f       	sbci	r19, 0xFF	; 255
  5fe:	24 0f       	add	r18, r20
  600:	35 1f       	adc	r19, r21
- 602:	30 93 7f 00 	sts	0x007F, r19
- 606:	20 93 7e 00 	sts	0x007E, r18
+ 602:	30 93 88 00 	sts	0x0088, r19
+ 606:	20 93 87 00 	sts	0x0087, r18
  60a:	6c 2f       	mov	r22, r28
- 60c:	85 e6       	ldi	r24, 0x65	; 101
+ 60c:	8e e6       	ldi	r24, 0x6E	; 110
  60e:	90 e0       	ldi	r25, 0x00	; 0
  610:	94 dd       	rcall	.-1240   	; 0x13a <usbCrc16Append>
  612:	cc 5f       	subi	r28, 0xFC	; 252
@@ -802,10 +802,10 @@ Disassembly of section .text:
  632:	49 f4       	brne	.+18     	; 0x646 <__stack+0x1e7>
  634:	81 50       	subi	r24, 0x01	; 1
  636:	d9 f7       	brne	.-10     	; 0x62e <__stack+0x1cf>
- 638:	10 92 81 00 	sts	0x0081, r1
- 63c:	10 92 7b 00 	sts	0x007B, r1
+ 638:	10 92 8a 00 	sts	0x008A, r1
+ 63c:	10 92 84 00 	sts	0x0084, r1
  640:	8a e5       	ldi	r24, 0x5A	; 90
- 642:	80 93 6f 00 	sts	0x006F, r24
+ 642:	80 93 78 00 	sts	0x0078, r24
  646:	df 91       	pop	r29
  648:	cf 91       	pop	r28
  64a:	08 95       	ret
@@ -818,199 +818,212 @@ Disassembly of section .text:
  654:	80 64       	ori	r24, 0x40	; 64
  656:	8b bf       	out	0x3b, r24	; 59
  658:	8b e4       	ldi	r24, 0x4B	; 75
- 65a:	80 93 70 00 	sts	0x0070, r24
+ 65a:	80 93 79 00 	sts	0x0079, r24
  65e:	8a e5       	ldi	r24, 0x5A	; 90
- 660:	80 93 6f 00 	sts	0x006F, r24
+ 660:	80 93 78 00 	sts	0x0078, r24
  664:	08 95       	ret
 
-00000666 <usbFunctionDescriptor>:
- 666:	fc 01       	movw	r30, r24
- 668:	83 81       	ldd	r24, Z+3	; 0x03
+00000666 <row_scan>:
+ 666:	88 23       	and	r24, r24
+ 668:	11 f0       	breq	.+4      	; 0x66e <row_scan+0x8>
  66a:	81 30       	cpi	r24, 0x01	; 1
- 66c:	41 f4       	brne	.+16     	; 0x67e <usbFunctionDescriptor+0x18>
- 66e:	85 ec       	ldi	r24, 0xC5	; 197
- 670:	90 e0       	ldi	r25, 0x00	; 0
- 672:	90 93 7f 00 	sts	0x007F, r25
- 676:	80 93 7e 00 	sts	0x007E, r24
- 67a:	82 e1       	ldi	r24, 0x12	; 18
- 67c:	08 95       	ret
- 67e:	80 e6       	ldi	r24, 0x60	; 96
- 680:	90 e0       	ldi	r25, 0x00	; 0
- 682:	90 93 7f 00 	sts	0x007F, r25
- 686:	80 93 7e 00 	sts	0x007E, r24
- 68a:	85 e6       	ldi	r24, 0x65	; 101
- 68c:	08 95       	ret
+ 66c:	11 f4       	brne	.+4      	; 0x672 <row_scan+0xc>
+ 66e:	88 b3       	in	r24, 0x18	; 24
+ 670:	88 bb       	out	0x18, r24	; 24
+ 672:	86 b3       	in	r24, 0x16	; 22
+ 674:	85 fb       	bst	r24, 5
+ 676:	88 27       	eor	r24, r24
+ 678:	80 f9       	bld	r24, 0
+ 67a:	9a 99       	sbic	0x13, 2	; 19
+ 67c:	82 60       	ori	r24, 0x02	; 2
+ 67e:	08 95       	ret
 
-0000068e <usbFunctionSetup>:
- 68e:	fc 01       	movw	r30, r24
- 690:	80 81       	ld	r24, Z
- 692:	98 2f       	mov	r25, r24
- 694:	90 76       	andi	r25, 0x60	; 96
- 696:	90 32       	cpi	r25, 0x20	; 32
- 698:	29 f4       	brne	.+10     	; 0x6a4 <usbFunctionSetup+0x16>
- 69a:	87 fd       	sbrc	r24, 7
- 69c:	03 c0       	rjmp	.+6      	; 0x6a4 <usbFunctionSetup+0x16>
- 69e:	81 e0       	ldi	r24, 0x01	; 1
- 6a0:	80 93 63 00 	sts	0x0063, r24
- 6a4:	8f ef       	ldi	r24, 0xFF	; 255
+00000680 <usbFunctionDescriptor>:
+ 680:	fc 01       	movw	r30, r24
+ 682:	83 81       	ldd	r24, Z+3	; 0x03
+ 684:	81 30       	cpi	r24, 0x01	; 1
+ 686:	41 f4       	brne	.+16     	; 0x698 <usbFunctionDescriptor+0x18>
+ 688:	85 ec       	ldi	r24, 0xC5	; 197
+ 68a:	90 e0       	ldi	r25, 0x00	; 0
+ 68c:	90 93 88 00 	sts	0x0088, r25
+ 690:	80 93 87 00 	sts	0x0087, r24
+ 694:	82 e1       	ldi	r24, 0x12	; 18
+ 696:	08 95       	ret
+ 698:	80 e6       	ldi	r24, 0x60	; 96
+ 69a:	90 e0       	ldi	r25, 0x00	; 0
+ 69c:	90 93 88 00 	sts	0x0088, r25
+ 6a0:	80 93 87 00 	sts	0x0087, r24
+ 6a4:	85 e6       	ldi	r24, 0x65	; 101
  6a6:	08 95       	ret
 
-000006a8 <usbFunctionRead>:
+000006a8 <usbFunctionSetup>:
  6a8:	fc 01       	movw	r30, r24
- 6aa:	10 82       	st	Z, r1
- 6ac:	11 82       	std	Z+1, r1	; 0x01
- 6ae:	12 82       	std	Z+2, r1	; 0x02
- 6b0:	13 82       	std	Z+3, r1	; 0x03
- 6b2:	14 82       	std	Z+4, r1	; 0x04
- 6b4:	15 82       	std	Z+5, r1	; 0x05
- 6b6:	16 82       	std	Z+6, r1	; 0x06
- 6b8:	87 e0       	ldi	r24, 0x07	; 7
- 6ba:	08 95       	ret
-
-000006bc <usbFunctionWrite>:
- 6bc:	81 e0       	ldi	r24, 0x01	; 1
- 6be:	08 95       	ret
-
-000006c0 <usbFunctionWriteOut>:
+ 6aa:	80 81       	ld	r24, Z
+ 6ac:	98 2f       	mov	r25, r24
+ 6ae:	90 76       	andi	r25, 0x60	; 96
+ 6b0:	90 32       	cpi	r25, 0x20	; 32
+ 6b2:	29 f4       	brne	.+10     	; 0x6be <usbFunctionSetup+0x16>
+ 6b4:	87 fd       	sbrc	r24, 7
+ 6b6:	03 c0       	rjmp	.+6      	; 0x6be <usbFunctionSetup+0x16>
+ 6b8:	81 e0       	ldi	r24, 0x01	; 1
+ 6ba:	80 93 67 00 	sts	0x0067, r24
+ 6be:	8f ef       	ldi	r24, 0xFF	; 255
  6c0:	08 95       	ret
 
-000006c2 <main>:
- 6c2:	cf 93       	push	r28
- 6c4:	df 93       	push	r29
- 6c6:	cd b7       	in	r28, 0x3d	; 61
- 6c8:	de b7       	in	r29, 0x3e	; 62
- 6ca:	28 97       	sbiw	r28, 0x08	; 8
- 6cc:	0f b6       	in	r0, 0x3f	; 63
- 6ce:	f8 94       	cli
- 6d0:	de bf       	out	0x3e, r29	; 62
- 6d2:	0f be       	out	0x3f, r0	; 63
- 6d4:	cd bf       	out	0x3d, r28	; 61
- 6d6:	2e e0       	ldi	r18, 0x0E	; 14
- 6d8:	88 e1       	ldi	r24, 0x18	; 24
- 6da:	90 e0       	ldi	r25, 0x00	; 0
- 6dc:	0f b6       	in	r0, 0x3f	; 63
- 6de:	f8 94       	cli
- 6e0:	a8 95       	wdr
- 6e2:	81 bd       	out	0x21, r24	; 33
- 6e4:	0f be       	out	0x3f, r0	; 63
- 6e6:	21 bd       	out	0x21, r18	; 33
- 6e8:	8b ee       	ldi	r24, 0xEB	; 235
- 6ea:	82 bb       	out	0x12, r24	; 18
- 6ec:	84 e1       	ldi	r24, 0x14	; 20
- 6ee:	81 bb       	out	0x11, r24	; 17
- 6f0:	11 ba       	out	0x11, r1	; 17
- 6f2:	8f ef       	ldi	r24, 0xFF	; 255
- 6f4:	85 bb       	out	0x15, r24	; 21
- 6f6:	14 ba       	out	0x14, r1	; 20
- 6f8:	a9 df       	rcall	.-174    	; 0x64c <usbInit>
- 6fa:	10 92 63 00 	sts	0x0063, r1
- 6fe:	78 94       	sei
- 700:	91 2c       	mov	r9, r1
- 702:	a1 2c       	mov	r10, r1
- 704:	11 e0       	ldi	r17, 0x01	; 1
- 706:	09 e0       	ldi	r16, 0x09	; 9
- 708:	20 e9       	ldi	r18, 0x90	; 144
- 70a:	f2 2e       	mov	r15, r18
- 70c:	3f e7       	ldi	r19, 0x7F	; 127
- 70e:	e3 2e       	mov	r14, r19
- 710:	48 e0       	ldi	r20, 0x08	; 8
- 712:	d4 2e       	mov	r13, r20
- 714:	50 e8       	ldi	r21, 0x80	; 128
- 716:	c5 2e       	mov	r12, r21
- 718:	a8 95       	wdr
- 71a:	5d de       	rcall	.-838    	; 0x3d6 <usbPoll>
- 71c:	23 b3       	in	r18, 0x13	; 19
- 71e:	91 e0       	ldi	r25, 0x01	; 1
- 720:	80 e0       	ldi	r24, 0x00	; 0
- 722:	39 2f       	mov	r19, r25
- 724:	32 23       	and	r19, r18
- 726:	21 f4       	brne	.+8      	; 0x730 <main+0x6e>
- 728:	9c e3       	ldi	r25, 0x3C	; 60
- 72a:	b9 2e       	mov	r11, r25
- 72c:	b8 0e       	add	r11, r24
- 72e:	0d c0       	rjmp	.+26     	; 0x74a <main+0x88>
- 730:	99 0f       	add	r25, r25
- 732:	8e 5f       	subi	r24, 0xFE	; 254
- 734:	8e 30       	cpi	r24, 0x0E	; 14
- 736:	40 f4       	brcc	.+16     	; 0x748 <main+0x86>
- 738:	86 30       	cpi	r24, 0x06	; 6
- 73a:	21 f0       	breq	.+8      	; 0x744 <main+0x82>
- 73c:	8d 30       	cpi	r24, 0x0D	; 13
- 73e:	89 f7       	brne	.-30     	; 0x722 <main+0x60>
- 740:	8c e0       	ldi	r24, 0x0C	; 12
- 742:	ef cf       	rjmp	.-34     	; 0x722 <main+0x60>
- 744:	85 e0       	ldi	r24, 0x05	; 5
- 746:	ed cf       	rjmp	.-38     	; 0x722 <main+0x60>
- 748:	b1 2c       	mov	r11, r1
- 74a:	ab 14       	cp	r10, r11
- 74c:	11 f0       	breq	.+4      	; 0x752 <main+0x90>
- 74e:	99 24       	eor	r9, r9
- 750:	93 94       	inc	r9
- 752:	80 91 6f 00 	lds	r24, 0x006F
- 756:	84 ff       	sbrs	r24, 4
- 758:	df cf       	rjmp	.-66     	; 0x718 <main+0x56>
- 75a:	99 20       	and	r9, r9
- 75c:	e9 f2       	breq	.-70     	; 0x718 <main+0x56>
- 75e:	aa 20       	and	r10, r10
- 760:	31 f0       	breq	.+12     	; 0x76e <main+0xac>
- 762:	d9 82       	std	Y+1, r13	; 0x01
- 764:	ca 82       	std	Y+2, r12	; 0x02
- 766:	ab 82       	std	Y+3, r10	; 0x03
- 768:	1c 82       	std	Y+4, r1	; 0x04
- 76a:	64 e0       	ldi	r22, 0x04	; 4
- 76c:	01 c0       	rjmp	.+2      	; 0x770 <main+0xae>
- 76e:	60 e0       	ldi	r22, 0x00	; 0
- 770:	bb 20       	and	r11, r11
- 772:	41 f1       	breq	.+80     	; 0x7c4 <main+0x102>
- 774:	e1 e0       	ldi	r30, 0x01	; 1
- 776:	f0 e0       	ldi	r31, 0x00	; 0
- 778:	ec 0f       	add	r30, r28
- 77a:	fd 1f       	adc	r31, r29
- 77c:	e6 0f       	add	r30, r22
- 77e:	f1 1d       	adc	r31, r1
- 780:	00 83       	st	Z, r16
- 782:	81 e0       	ldi	r24, 0x01	; 1
- 784:	86 0f       	add	r24, r22
- 786:	e1 e0       	ldi	r30, 0x01	; 1
- 788:	f0 e0       	ldi	r31, 0x00	; 0
- 78a:	ec 0f       	add	r30, r28
- 78c:	fd 1f       	adc	r31, r29
- 78e:	e8 0f       	add	r30, r24
- 790:	f1 1d       	adc	r31, r1
- 792:	f0 82       	st	Z, r15
- 794:	83 e0       	ldi	r24, 0x03	; 3
- 796:	86 0f       	add	r24, r22
- 798:	92 e0       	ldi	r25, 0x02	; 2
- 79a:	96 0f       	add	r25, r22
- 79c:	e1 e0       	ldi	r30, 0x01	; 1
- 79e:	f0 e0       	ldi	r31, 0x00	; 0
- 7a0:	ec 0f       	add	r30, r28
- 7a2:	fd 1f       	adc	r31, r29
- 7a4:	e9 0f       	add	r30, r25
- 7a6:	f1 1d       	adc	r31, r1
- 7a8:	b0 82       	st	Z, r11
- 7aa:	6c 5f       	subi	r22, 0xFC	; 252
- 7ac:	e1 e0       	ldi	r30, 0x01	; 1
- 7ae:	f0 e0       	ldi	r31, 0x00	; 0
- 7b0:	ec 0f       	add	r30, r28
- 7b2:	fd 1f       	adc	r31, r29
- 7b4:	e8 0f       	add	r30, r24
- 7b6:	f1 1d       	adc	r31, r1
- 7b8:	e0 82       	st	Z, r14
- 7ba:	68 30       	cpi	r22, 0x08	; 8
- 7bc:	19 f4       	brne	.+6      	; 0x7c4 <main+0x102>
- 7be:	10 93 63 00 	sts	0x0063, r17
- 7c2:	02 c0       	rjmp	.+4      	; 0x7c8 <main+0x106>
- 7c4:	10 92 63 00 	sts	0x0063, r1
- 7c8:	ce 01       	movw	r24, r28
- 7ca:	01 96       	adiw	r24, 0x01	; 1
- 7cc:	de dd       	rcall	.-1092   	; 0x38a <usbSetInterrupt>
- 7ce:	ab 2c       	mov	r10, r11
- 7d0:	91 2c       	mov	r9, r1
- 7d2:	a2 cf       	rjmp	.-188    	; 0x718 <main+0x56>
+000006c2 <usbFunctionRead>:
+ 6c2:	fc 01       	movw	r30, r24
+ 6c4:	10 82       	st	Z, r1
+ 6c6:	11 82       	std	Z+1, r1	; 0x01
+ 6c8:	12 82       	std	Z+2, r1	; 0x02
+ 6ca:	13 82       	std	Z+3, r1	; 0x03
+ 6cc:	14 82       	std	Z+4, r1	; 0x04
+ 6ce:	15 82       	std	Z+5, r1	; 0x05
+ 6d0:	16 82       	std	Z+6, r1	; 0x06
+ 6d2:	87 e0       	ldi	r24, 0x07	; 7
+ 6d4:	08 95       	ret
 
-000007d4 <_exit>:
- 7d4:	f8 94       	cli
+000006d6 <usbFunctionWrite>:
+ 6d6:	81 e0       	ldi	r24, 0x01	; 1
+ 6d8:	08 95       	ret
 
-000007d6 <__stop_program>:
- 7d6:	ff cf       	rjmp	.-2      	; 0x7d6 <__stop_program>
+000006da <usbFunctionWriteOut>:
+ 6da:	08 95       	ret
+
+000006dc <main>:
+ 6dc:	2e e0       	ldi	r18, 0x0E	; 14
+ 6de:	88 e1       	ldi	r24, 0x18	; 24
+ 6e0:	90 e0       	ldi	r25, 0x00	; 0
+ 6e2:	0f b6       	in	r0, 0x3f	; 63
+ 6e4:	f8 94       	cli
+ 6e6:	a8 95       	wdr
+ 6e8:	81 bd       	out	0x21, r24	; 33
+ 6ea:	0f be       	out	0x3f, r0	; 63
+ 6ec:	21 bd       	out	0x21, r18	; 33
+ 6ee:	8b ee       	ldi	r24, 0xEB	; 235
+ 6f0:	82 bb       	out	0x12, r24	; 18
+ 6f2:	84 e1       	ldi	r24, 0x14	; 20
+ 6f4:	81 bb       	out	0x11, r24	; 17
+ 6f6:	11 ba       	out	0x11, r1	; 17
+ 6f8:	87 b3       	in	r24, 0x17	; 23
+ 6fa:	85 61       	ori	r24, 0x15	; 21
+ 6fc:	87 bb       	out	0x17, r24	; 23
+ 6fe:	8e 9a       	sbi	0x11, 6	; 17
+ 700:	bd 98       	cbi	0x17, 5	; 23
+ 702:	84 b3       	in	r24, 0x14	; 20
+ 704:	8b 7e       	andi	r24, 0xEB	; 235
+ 706:	84 bb       	out	0x14, r24	; 20
+ 708:	81 b3       	in	r24, 0x11	; 17
+ 70a:	85 7f       	andi	r24, 0xF5	; 245
+ 70c:	81 bb       	out	0x11, r24	; 17
+ 70e:	9e df       	rcall	.-196    	; 0x64c <usbInit>
+ 710:	10 92 67 00 	sts	0x0067, r1
+ 714:	78 94       	sei
+ 716:	d1 e0       	ldi	r29, 0x01	; 1
+ 718:	cf e7       	ldi	r28, 0x7F	; 127
+ 71a:	12 e0       	ldi	r17, 0x02	; 2
+ 71c:	03 e0       	ldi	r16, 0x03	; 3
+ 71e:	a8 95       	wdr
+ 720:	5a de       	rcall	.-844    	; 0x3d6 <usbPoll>
+ 722:	c4 9a       	sbi	0x18, 4	; 24
+ 724:	10 92 6a 00 	sts	0x006A, r1
+ 728:	b5 99       	sbic	0x16, 5	; 22
+ 72a:	d0 93 6a 00 	sts	0x006A, r29
+ 72e:	9a 9b       	sbis	0x13, 2	; 19
+ 730:	05 c0       	rjmp	.+10     	; 0x73c <main+0x60>
+ 732:	80 91 6a 00 	lds	r24, 0x006A
+ 736:	82 60       	ori	r24, 0x02	; 2
+ 738:	80 93 6a 00 	sts	0x006A, r24
+ 73c:	90 91 6a 00 	lds	r25, 0x006A
+ 740:	80 91 6b 00 	lds	r24, 0x006B
+ 744:	89 27       	eor	r24, r25
+ 746:	80 ff       	sbrs	r24, 0
+ 748:	11 c0       	rjmp	.+34     	; 0x76c <main+0x90>
+ 74a:	10 92 64 00 	sts	0x0064, r1
+ 74e:	90 ff       	sbrs	r25, 0
+ 750:	03 c0       	rjmp	.+6      	; 0x758 <main+0x7c>
+ 752:	c0 93 65 00 	sts	0x0065, r28
+ 756:	02 c0       	rjmp	.+4      	; 0x75c <main+0x80>
+ 758:	10 92 65 00 	sts	0x0065, r1
+ 75c:	80 91 78 00 	lds	r24, 0x0078
+ 760:	84 ff       	sbrs	r24, 4
+ 762:	04 c0       	rjmp	.+8      	; 0x76c <main+0x90>
+ 764:	64 e0       	ldi	r22, 0x04	; 4
+ 766:	82 e6       	ldi	r24, 0x62	; 98
+ 768:	90 e0       	ldi	r25, 0x00	; 0
+ 76a:	0f de       	rcall	.-994    	; 0x38a <usbSetInterrupt>
+ 76c:	90 91 6a 00 	lds	r25, 0x006A
+ 770:	80 91 6b 00 	lds	r24, 0x006B
+ 774:	89 27       	eor	r24, r25
+ 776:	81 ff       	sbrs	r24, 1
+ 778:	11 c0       	rjmp	.+34     	; 0x79c <main+0xc0>
+ 77a:	d0 93 64 00 	sts	0x0064, r29
+ 77e:	91 ff       	sbrs	r25, 1
+ 780:	03 c0       	rjmp	.+6      	; 0x788 <main+0xac>
+ 782:	c0 93 65 00 	sts	0x0065, r28
+ 786:	02 c0       	rjmp	.+4      	; 0x78c <main+0xb0>
+ 788:	10 92 65 00 	sts	0x0065, r1
+ 78c:	80 91 78 00 	lds	r24, 0x0078
+ 790:	84 ff       	sbrs	r24, 4
+ 792:	04 c0       	rjmp	.+8      	; 0x79c <main+0xc0>
+ 794:	64 e0       	ldi	r22, 0x04	; 4
+ 796:	82 e6       	ldi	r24, 0x62	; 98
+ 798:	90 e0       	ldi	r25, 0x00	; 0
+ 79a:	f7 dd       	rcall	.-1042   	; 0x38a <usbSetInterrupt>
+ 79c:	80 91 6a 00 	lds	r24, 0x006A
+ 7a0:	80 93 6b 00 	sts	0x006B, r24
+ 7a4:	c4 98       	cbi	0x18, 4	; 24
+ 7a6:	c2 9a       	sbi	0x18, 2	; 24
+ 7a8:	10 92 6a 00 	sts	0x006A, r1
+ 7ac:	b5 99       	sbic	0x16, 5	; 22
+ 7ae:	d0 93 6a 00 	sts	0x006A, r29
+ 7b2:	9a 9b       	sbis	0x13, 2	; 19
+ 7b4:	05 c0       	rjmp	.+10     	; 0x7c0 <main+0xe4>
+ 7b6:	80 91 6a 00 	lds	r24, 0x006A
+ 7ba:	82 60       	ori	r24, 0x02	; 2
+ 7bc:	80 93 6a 00 	sts	0x006A, r24
+ 7c0:	90 91 6a 00 	lds	r25, 0x006A
+ 7c4:	80 91 6c 00 	lds	r24, 0x006C
+ 7c8:	89 27       	eor	r24, r25
+ 7ca:	80 ff       	sbrs	r24, 0
+ 7cc:	11 c0       	rjmp	.+34     	; 0x7f0 <main+0x114>
+ 7ce:	10 93 64 00 	sts	0x0064, r17
+ 7d2:	90 ff       	sbrs	r25, 0
+ 7d4:	03 c0       	rjmp	.+6      	; 0x7dc <main+0x100>
+ 7d6:	c0 93 65 00 	sts	0x0065, r28
+ 7da:	02 c0       	rjmp	.+4      	; 0x7e0 <main+0x104>
+ 7dc:	10 92 65 00 	sts	0x0065, r1
+ 7e0:	80 91 78 00 	lds	r24, 0x0078
+ 7e4:	84 ff       	sbrs	r24, 4
+ 7e6:	04 c0       	rjmp	.+8      	; 0x7f0 <main+0x114>
+ 7e8:	64 e0       	ldi	r22, 0x04	; 4
+ 7ea:	82 e6       	ldi	r24, 0x62	; 98
+ 7ec:	90 e0       	ldi	r25, 0x00	; 0
+ 7ee:	cd dd       	rcall	.-1126   	; 0x38a <usbSetInterrupt>
+ 7f0:	90 91 6a 00 	lds	r25, 0x006A
+ 7f4:	80 91 6c 00 	lds	r24, 0x006C
+ 7f8:	89 27       	eor	r24, r25
+ 7fa:	81 ff       	sbrs	r24, 1
+ 7fc:	11 c0       	rjmp	.+34     	; 0x820 <main+0x144>
+ 7fe:	00 93 64 00 	sts	0x0064, r16
+ 802:	91 ff       	sbrs	r25, 1
+ 804:	03 c0       	rjmp	.+6      	; 0x80c <main+0x130>
+ 806:	c0 93 65 00 	sts	0x0065, r28
+ 80a:	02 c0       	rjmp	.+4      	; 0x810 <main+0x134>
+ 80c:	10 92 65 00 	sts	0x0065, r1
+ 810:	80 91 78 00 	lds	r24, 0x0078
+ 814:	84 ff       	sbrs	r24, 4
+ 816:	04 c0       	rjmp	.+8      	; 0x820 <main+0x144>
+ 818:	64 e0       	ldi	r22, 0x04	; 4
+ 81a:	82 e6       	ldi	r24, 0x62	; 98
+ 81c:	90 e0       	ldi	r25, 0x00	; 0
+ 81e:	b5 dd       	rcall	.-1174   	; 0x38a <usbSetInterrupt>
+ 820:	80 91 6a 00 	lds	r24, 0x006A
+ 824:	80 93 6c 00 	sts	0x006C, r24
+ 828:	c2 98       	cbi	0x18, 2	; 24
+ 82a:	79 cf       	rjmp	.-270    	; 0x71e <main+0x42>
+
+0000082c <_exit>:
+ 82c:	f8 94       	cli
+
+0000082e <__stop_program>:
+ 82e:	ff cf       	rjmp	.-2      	; 0x82e <__stop_program>
