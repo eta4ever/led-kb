@@ -9,6 +9,13 @@
 
 #include "descriptor.h" // вынес сюда громоздкие константы дескрипторов
 
+#include "button_matrix.h" // обработка матрицы кнопок
+
+uchar last_state[ROWCOUNT] = { 0 }; // массив предыдущего состояния матрицы кнопок, строка - байт
+uchar curr_state = 0; // текущее состояние строки матрицы кнопок
+
+uchar midiMsg[4] = { 0x09, 0x90, 0x00, 0x00 }; // MIDI-сообщение. Только Note On. Изменяются 3-4 байты (key и velocity)
+
 /* ------------------------------------------------------------------------- */
 /* ----------------------------- USB interface ----------------------------- */
 /* ------------------------------------------------------------------------- */
@@ -107,50 +114,10 @@ static void hardwareInit(void)
 	USBDDR = 0;		/*  remove USB reset condition */
 #endif
 
-// test buttons on port C
-	PORTC = 0xff;		/* all pull-ups */
-	DDRC = 0x00;		/* all pins input */
 }
-
-
-/* Simple monophonic keyboard
-   The following function returns a midi note value for the first key pressed.
-   Key 0 -> 60 (middle C),
-   Key 1 -> 62 (D)
-   Key 2 -> 64 (E)
-   Key 3 -> 65 (F)
-   Key 4 -> 67 (G)
-   Key 5 -> 69 (A)
-   Key 6 -> 71 (B)
-   Key 7 -> 72 (C)
- * returns 0 if no key is pressed.
- */
-static uchar keyPressed(void)
-{
-	uchar i, mask, x;
-
-	x = PINC;
-	mask = 1;
-	for (i = 0; i <= 13; i += 2) {
-		if (6 == i)
-			i--;
-		if (13 == i)
-			i--;
-		if ((x & mask) == 0)
-			return i + 60;
-		mask <<= 1;
-	}
-	return 0;
-}
-
 
 int main(void)
 {
-	uchar key, lastKey = 0;
-	uchar keyDidChange = 0;
-	uchar midiMsg[8];
-	uchar iii;
-
 	wdt_enable(WDTO_1S);
 	hardwareInit();
 	odDebugInit();
@@ -164,41 +131,29 @@ int main(void)
 		wdt_reset();
 		usbPoll();
 
-		key = keyPressed();
-		if (lastKey != key)
-			keyDidChange = 1;
+		// сканирование строк кнопок
+		for (uchar row_num = 0; row_num < ROWCOUNT; row_num ++){
 
-		if (usbInterruptIsReady()) {
-			if (keyDidChange) {
-				/* use last key and not current key status in order to avoid lost
-				   changes in key status. */
-				// up to two midi events in one midi msg.
-				// For description of USB MIDI msg see:
-				// http://www.usb.org/developers/devclass_docs/midi10.pdf
-				// 4. USB MIDI Event Packets
-				iii = 0;
-				if (lastKey) {	/* release */
-					midiMsg[iii++] = 0x08;
-					midiMsg[iii++] = 0x80;
-					midiMsg[iii++] = lastKey;
-					midiMsg[iii++] = 0x00;
-				}
-				if (key) {	/* press */
-					midiMsg[iii++] = 0x09;
-					midiMsg[iii++] = 0x90;
-					midiMsg[iii++] = key;
-					midiMsg[iii++] = 0x7f;
-				}
-				if (8 == iii)
-					sendEmptyFrame = 1;
-				else
-					sendEmptyFrame = 0;
+			curr_state = row_scan(row_num);
 
-				usbSetInterrupt(midiMsg, iii);
-				keyDidChange = 0;
-				lastKey = key;
+			for (uchar bit=0; bit< COLCOUNT; bit++){ // побитовое сравнение текущего состояния строки с прошлым
+				uchar curr_bit = (curr_state >> bit) & 1;
+				uchar last_bit = (last_state[row_num] >> bit) & 1;
+
+				if (curr_bit ^ last_bit) continue; // биты равны, переход к следующей итерации
+
+				if (curr_bit) midiMsg[3] = 0x7f; // нажатие: код velocity 0x7f
+				else midiMsg[3] = 0x00; // отпускание: код velocity 0x00
+
+				midiMsg[2] = row_num*COLCOUNT + bit; // номер ноты
+
+				sendEmptyFrame = 0; // хз
+				if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4); // отправка MIDI-сообщения
 			}
-		}		// usbInterruptIsReady()
+
+			last_state[row_num] = curr_state;
+		}
+
 	}
 	return 0;
 }
