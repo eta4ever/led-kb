@@ -3,6 +3,7 @@
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
+#include <avr/delay.h>
 
 #include "usbdrv.h"
 #include "oddebug.h"
@@ -16,8 +17,8 @@ uchar curr_state = 0; // текущее состояние строки матр
 
 uchar midiMsg[4] = { 0x09, 0x90, 0x00, 0x00 }; // MIDI-сообщение. Только Note On. Изменяются 3-4 байты (key и velocity)
 
-uchar lastkey = 0;
-uchar currkey = 0;
+//uchar lastkey = 0;
+//uchar currkey = 0;
 
 /* ------------------------------------------------------------------------- */
 /* ----------------------------- USB interface ----------------------------- */
@@ -141,72 +142,30 @@ int main(void)
 		wdt_reset();
 		usbPoll();
 
-		/* Для сканирования матрицы кнопок. ROW+
-		 * ROW0 PB4
-		 * ROW1 PB2
-		 * ROW2 PD6
-		 * ROW3 PB0
-		 *
-		 * COL0 PB5
-		 * COL1 PC2
-		 * COL2 PC4
-		 * COL3 PD3
-		 * COL4 PD1
-		 */
+		for (uchar row_num = 0; row_num < ROWCOUNT; row_num++){
 
-		PORTB |= 0b00010000;
-		curr_state = 0;
+			curr_state = row_scan(row_num);
+			if (curr_state == last_state[row_num]) continue;
 
-		if (PINB & 0b00100000) curr_state |= 0b01;
-		if (PINC & 0b00000100) curr_state |= 0b10;
+			for (uchar bit = 0; bit < COLCOUNT; bit++){
 
-		if ( (curr_state & 0b01) != (last_state[0] & 0b01) ){
+				uchar curr_bit = (curr_state >> bit) & 1;
+				uchar last_bit = (last_state[row_num] >> bit) & 1;
 
-			midiMsg[2] = 0;
-			if (curr_state & 0b01) midiMsg[3] = 0x7f;
-			else midiMsg[3] = 0;
+				if ( curr_bit == last_bit ) continue;
 
-			if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4);
+				if ( curr_bit ) midiMsg[3] = 0x7f;
+				else midiMsg[3] = 0x00;
+
+				midiMsg[2] = bit + row_num * COLCOUNT;
+
+				if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4);
+
+				_delay_ms(10);
+			}
+
+			last_state[row_num] = curr_state;
 		}
-
-		if ( (curr_state & 0b10) != (last_state[0] & 0b10) ){
-
-			midiMsg[2] = 1;
-			if (curr_state & 0b10) midiMsg[3] =  0x7f;
-			else midiMsg[3] = 0;
-
-			if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4);
-		}
-
-		last_state[0] = curr_state;
-
-		PORTB &= 0b11101111;
-		PORTB |= 0b00000100;
-		curr_state = 0;
-
-		if (PINB & 0b00100000) curr_state |= 0b01;
-		if (PINC & 0b00000100) curr_state |= 0b10;
-
-		if ( (curr_state & 0b01) != (last_state[1] & 0b01) ){
-
-			midiMsg[2] = 2;
-			if (curr_state & 0b01) midiMsg[3] = 0x7f;
-			else midiMsg[3] = 0;
-
-			if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4);
-		}
-
-		if ( (curr_state & 0b10) != (last_state[1] & 0b10) ){
-
-			midiMsg[2] = 3;
-			if (curr_state & 0b10) midiMsg[3] =  0x7f;
-			else midiMsg[3] = 0x0;
-
-			if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4);
-		}
-
-		last_state[1] = curr_state;
-		PORTB &= 0b11111011;
 
 	}
 	return 0;
