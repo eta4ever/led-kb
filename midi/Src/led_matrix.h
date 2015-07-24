@@ -67,19 +67,19 @@ void led_col_high(char col_num){
 	}
 }
 
-// т.к. на столбцах активный низкий уровень, это гашение столбцов
+// гашение столбцов
 void all_cols_high(void){
 	for (char col_num = 0; col_num < COLCOUNT; col_num++) led_col_high(col_num);
 }
 
 
-void row_flash(char row_num, row_byte){
+void row_flash(char row_num, char row_byte){
 
 	all_rows_off();
 	all_cols_high();
 	led_row_on(row_num);
 
-	for (bit = 0; bit < COLCOUNT; bit++) if (row_byte & (1<<bit)) led_col_low(bit);
+	for (char bit = 0; bit < COLCOUNT; bit++) if (row_byte & (1<<bit)) led_col_low(bit);
 
 	// гашение происходит при следующем вызове row_flash
 

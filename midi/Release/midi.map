@@ -137,7 +137,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x810
+.text           0x00000000      0x966
  *(.vectors)
  .vectors       0x00000000       0x26 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr4/crtm8.o
                 0x00000000                __vector_default
@@ -252,68 +252,89 @@ END GROUP
  .text.row_scan
                 0x000006a6       0x2c ./Src/main.o
                 0x000006a6                row_scan
+ .text.led_row_on
+                0x000006d2       0x20 ./Src/main.o
+                0x000006d2                led_row_on
+ .text.led_row_off
+                0x000006f2       0x20 ./Src/main.o
+                0x000006f2                led_row_off
+ .text.all_rows_off
+                0x00000712        0x8 ./Src/main.o
+                0x00000712                all_rows_off
+ .text.led_col_low
+                0x0000071a       0x2e ./Src/main.o
+                0x0000071a                led_col_low
+ .text.led_col_high
+                0x00000748       0x2e ./Src/main.o
+                0x00000748                led_col_high
+ .text.all_cols_high
+                0x00000776        0x8 ./Src/main.o
+                0x00000776                all_cols_high
+ .text.row_flash
+                0x0000077e       0x48 ./Src/main.o
+                0x0000077e                row_flash
  .text.usbFunctionDescriptor
-                0x000006d2       0x28 ./Src/main.o
-                0x000006d2                usbFunctionDescriptor
+                0x000007c6       0x28 ./Src/main.o
+                0x000007c6                usbFunctionDescriptor
  .text.usbFunctionSetup
-                0x000006fa       0x1a ./Src/main.o
-                0x000006fa                usbFunctionSetup
+                0x000007ee       0x1a ./Src/main.o
+                0x000007ee                usbFunctionSetup
  .text.usbFunctionRead
-                0x00000714       0x14 ./Src/main.o
-                0x00000714                usbFunctionRead
+                0x00000808       0x14 ./Src/main.o
+                0x00000808                usbFunctionRead
  .text.usbFunctionWrite
-                0x00000728        0x4 ./Src/main.o
-                0x00000728                usbFunctionWrite
+                0x0000081c        0x4 ./Src/main.o
+                0x0000081c                usbFunctionWrite
  .text.usbFunctionWriteOut
-                0x0000072c        0x2 ./Src/main.o
-                0x0000072c                usbFunctionWriteOut
+                0x00000820       0x40 ./Src/main.o
+                0x00000820                usbFunctionWriteOut
  .text.startup.main
-                0x0000072e       0xde ./Src/main.o
-                0x0000072e                main
+                0x00000860      0x102 ./Src/main.o
+                0x00000860                main
  .text.libgcc.mul
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  .text.libgcc.div
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
- .text.libgcc   0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+ .text.libgcc   0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  .text.libgcc.prologue
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  .text.libgcc.builtins
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  .text.libgcc.fmul
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  .text.libgcc.fixed
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  .text.libgcc.mul
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.div
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
- .text.libgcc   0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+ .text.libgcc   0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.prologue
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.builtins
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.fmul
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.fixed
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.mul
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.div
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
- .text.libgcc   0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+ .text.libgcc   0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.prologue
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.builtins
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.fmul
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.fixed
-                0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
-                0x0000080c                . = ALIGN (0x2)
+                0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+                0x00000962                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x0000080c        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
-                0x0000080c                _exit
-                0x0000080c                exit
+ .fini9         0x00000962        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000962                _exit
+                0x00000962                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -332,11 +353,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x0000080c        0x4 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+ .fini0         0x00000962        0x4 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000810                _etext = .
+                0x00000966                _etext = .
 
-.data           0x00800060        0x6 load address 0x00000810
+.data           0x00800060        0x6 load address 0x00000966
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800060        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr4/crtm8.o
@@ -362,7 +383,7 @@ END GROUP
                 0x00800066                _edata = .
                 0x00800066                PROVIDE (__data_end, .)
 
-.bss            0x00800066       0x3b
+.bss            0x00800066       0x3d
                 0x00800066                PROVIDE (__bss_start, .)
  *(.bss)
  .bss           0x00800066        0x0 e:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr4/crtm8.o
@@ -378,35 +399,37 @@ END GROUP
                 0x00800066        0x1 ./usbdrv/usbdrv.o
  .bss.sendEmptyFrame
                 0x00800067        0x1 ./Src/main.o
+ .bss.leds      0x00800068        0x2 ./Src/main.o
+                0x00800068                leds
  .bss.curr_state
-                0x00800068        0x1 ./Src/main.o
-                0x00800068                curr_state
+                0x0080006a        0x1 ./Src/main.o
+                0x0080006a                curr_state
  .bss.last_state
-                0x00800069        0x2 ./Src/main.o
-                0x00800069                last_state
+                0x0080006b        0x2 ./Src/main.o
+                0x0080006b                last_state
  *(COMMON)
- COMMON         0x0080006b       0x36 ./usbdrv/usbdrv.o
-                0x0080006b                usbTxBuf
-                0x00800076                usbTxStatus1
-                0x00800082                usbDeviceAddr
-                0x00800083                usbRxToken
-                0x00800084                usbInputBufOffset
-                0x00800085                usbMsgPtr
-                0x00800087                usbRxLen
-                0x00800088                usbNewDeviceAddr
-                0x00800089                usbCurrentTok
-                0x0080008a                usbConfiguration
-                0x0080008b                usbRxBuf
-                0x008000a1                PROVIDE (__bss_end, .)
-                0x00000810                __data_load_start = LOADADDR (.data)
-                0x00000816                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x0080006d       0x36 ./usbdrv/usbdrv.o
+                0x0080006d                usbTxBuf
+                0x00800078                usbTxStatus1
+                0x00800084                usbDeviceAddr
+                0x00800085                usbRxToken
+                0x00800086                usbInputBufOffset
+                0x00800087                usbMsgPtr
+                0x00800089                usbRxLen
+                0x0080008a                usbNewDeviceAddr
+                0x0080008b                usbCurrentTok
+                0x0080008c                usbConfiguration
+                0x0080008d                usbRxBuf
+                0x008000a3                PROVIDE (__bss_end, .)
+                0x00000966                __data_load_start = LOADADDR (.data)
+                0x0000096c                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x008000a1        0x0
-                0x008000a1                PROVIDE (__noinit_start, .)
+.noinit         0x008000a3        0x0
+                0x008000a3                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x008000a1                PROVIDE (__noinit_end, .)
-                0x008000a1                _end = .
-                0x008000a1                PROVIDE (__heap_start, .)
+                0x008000a3                PROVIDE (__noinit_end, .)
+                0x008000a3                _end = .
+                0x008000a3                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)

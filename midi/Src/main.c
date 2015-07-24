@@ -84,7 +84,7 @@ uchar usbFunctionWrite(uchar * data, uchar len)
 /*                                                                           */
 /*---------------------------------------------------------------------------*/
 
-uchar usbFunctionWriteOut(uchar * data, uchar len)
+void usbFunctionWriteOut(uchar * data, uchar len)
 {
 /*
  * USB-MIDI пакет нам нужен только четырехбайтовый.
@@ -94,19 +94,18 @@ uchar usbFunctionWriteOut(uchar * data, uchar len)
  *
  */
 	uchar cin = (*data) & 0x0f; // игнор старшего полубайта, нужен только младший
-	if (( cin != 0x9 ) && ( cin != 0x8 )) return 0; // возврат 0 если "ненужный" пакет
+	if (( cin == 0x9 ) || ( cin == 0x8 )) {
 
-	uchar note = (*data + 2);
-//	uchar vel = (*data + 3); пока не используется
-	uchar row_num = note / COLCOUNT;
-	uchar col_num = note % COLCOUNT;
+		uchar note = (*(data + 2));
+	//	uchar vel = (*(data + 3)); пока не используется
+		uchar row_num = note / COLCOUNT;
+		uchar col_num = note % COLCOUNT;
 
-	if (cin == 0x9) leds[row_num] |= (1<<col_num); // включить бит в матрице
-	if (cin == 0x8) leds[row_num] &= ~(1<<col_num); // выключить бит в матрице
+		if (cin == 0x9) leds[row_num] |= (1<<col_num); // включить бит в матрице
+		if (cin == 0x8) leds[row_num] &= ~(1<<col_num); // выключить бит в матрице
 
+	}
 //	if (len > 4) parseUSBMidiMessage(data+4, len-4); предусмотреть потом обработку нескольких миди-сообщений в одном USB,
-
-	return 1;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -140,14 +139,44 @@ static void hardwareInit(void)
 	USBDDR = 0;		/*  remove USB reset condition */
 #endif
 
+	/* Для отжигания матрицей светодиодов. ROW+
+	 * ROW0 PC0
+	 * ROW1 PB3
+	 * ROW2 PB1
+	 * ROW3 PD7
+	 *
+	 * COL0 PC1
+	 * COL1 PC3
+	 * COL2 PC5
+	 * COL3 PD5
+	 * COL4 PD0
+	 */
 
-DDRB |= 0b00010101; // PB4,2,0 - выходы
-DDRD |= 0b01000000; // PD6 выход
-DDRB &= 0b11011111; // PB5 вход
-DDRC &= 0b11101011; // PC4,2 - входы
-DDRD &= 0b11110101; // PD3,1 - входы
+DDRB |= (1<<PB3)|(1<<PB1);
+DDRC |= (1<<PC0)|(1<<PC1)|(1<<PC3)|(1<<PC5);
+DDRD |= (1<<PD7)|(1<<PD5)|(1<<PD0);
 
+/*Для сканирования матрицы кнопок. ROW+
+	 * ROW0 PB4
+	 * ROW1 PB2
+	 * ROW2 PD6
+	 * ROW3 PB0
+	 *
+	 * COL0 PB5
+	 * COL1 PC2
+	 * COL2 PC4
+	 * COL3 PD3
+	 * COL4 PD1
+	 */
+DDRB |= (1<<PB4)|(1<<PB2)|(1<<PB0);
+DDRD |= (1<<PD6);
+
+DDRB &= ~(1<<PB5);
+DDRC &= ~( (1<<PC4)|(1<<PC2) );
+DDRD &= ~( (1<<PD3)|(1<<PD1) );
 }
+
+
 
 int main(void)
 {
@@ -165,6 +194,9 @@ int main(void)
 		usbPoll();
 
 		for (uchar row_num = 0; row_num < ROWCOUNT; row_num++){
+
+			// матрица светодиодов
+			row_flash(row_num, leds[row_num]);
 
 			// сканирование матрицы кнопок
 			curr_state = row_scan(row_num);
@@ -188,9 +220,6 @@ int main(void)
 			}
 
 			last_state[row_num] = curr_state;
-
-			// матрица светодиодов
-			row_flash(row_num, leds[row_num]);
 
 		}
 
