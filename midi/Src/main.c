@@ -11,12 +11,14 @@
 #include "descriptor.h" // вынес сюда громоздкие константы дескрипторов
 
 #include "button_matrix.h" // обработка матрицы кнопок
+#include "led_matrix.h" // обработка матрицы светодиодов
 
 uchar last_state[ROWCOUNT] = { 0 }; // массив предыдущего состояния матрицы кнопок, строка - байт
 uchar curr_state = 0; // текущее состояние строки матрицы кнопок
 
 uchar midiMsg[4] = { 0x09, 0x90, 0x00, 0x00 }; // MIDI-сообщение. Только Note On. Изменяются 3-4 байты (key и velocity)
 
+uchar leds[ROWCOUNT] = { 0 }; // массив состояния светодиодов
 //uchar lastkey = 0;
 //uchar currkey = 0;
 
@@ -82,9 +84,29 @@ uchar usbFunctionWrite(uchar * data, uchar len)
 /*                                                                           */
 /*---------------------------------------------------------------------------*/
 
-void usbFunctionWriteOut(uchar * data, uchar len)
+uchar usbFunctionWriteOut(uchar * data, uchar len)
 {
-//
+/*
+ * USB-MIDI пакет нам нужен только четырехбайтовый.
+ * Первый байт - старший полубайт Cable Number, игнорируем
+ * Первый байт - младший полубайт Code Index Number (cin). Интересны 0x9 (Note On) и 0x8 (Note Off).
+ * MIDI-сообщения вида 9n kk vv оборачивается в USB-MIDI Event вида 19 9n kk vv (для Cable Number 1 CIN 9)
+ *
+ */
+	uchar cin = (*data) & 0x0f; // игнор старшего полубайта, нужен только младший
+	if (( cin != 0x9 ) && ( cin != 0x8 )) return 0; // возврат 0 если "ненужный" пакет
+
+	uchar note = (*data + 2);
+//	uchar vel = (*data + 3); пока не используется
+	uchar row_num = note / COLCOUNT;
+	uchar col_num = note % COLCOUNT;
+
+	if (cin == 0x9) leds[row_num] |= (1<<col_num); // включить бит в матрице
+	if (cin == 0x8) leds[row_num] &= ~(1<<col_num); // выключить бит в матрице
+
+//	if (len > 4) parseUSBMidiMessage(data+4, len-4); предусмотреть потом обработку нескольких миди-сообщений в одном USB,
+
+	return 1;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -144,6 +166,7 @@ int main(void)
 
 		for (uchar row_num = 0; row_num < ROWCOUNT; row_num++){
 
+			// сканирование матрицы кнопок
 			curr_state = row_scan(row_num);
 			if (curr_state == last_state[row_num]) continue;
 
@@ -165,6 +188,10 @@ int main(void)
 			}
 
 			last_state[row_num] = curr_state;
+
+			// матрица светодиодов
+			row_flash(row_num, leds[row_num]);
+
 		}
 
 	}

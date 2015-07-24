@@ -1,17 +1,6 @@
 #include <avr/io.h>
 #include <avr/pgmspace.h>
-/* Сканирование матрицы кнопок. ROW+
- * ROW0 PB4
- * ROW1 PB2
- * ROW2 PD6
- * ROW3 PB0
- *
- * COL0 PB5
- * COL1 PC2
- * COL2 PC4
- * COL3 PD3
- * COL4 PD1
- */
+// Сканирование матрицы кнопок. ROW+
 
 #define ROWCOUNT 2
 #define COLCOUNT 2
