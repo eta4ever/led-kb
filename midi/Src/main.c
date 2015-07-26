@@ -3,14 +3,14 @@
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
-#include <avr/delay.h>
+#include <util/delay.h>
 
 #include "usbdrv.h"
 #include "oddebug.h"
 
+#include "button_matrix.h" // обработка матрицы кнопок
 #include "descriptor.h" // вынес сюда громоздкие константы дескрипторов
 
-#include "button_matrix.h" // обработка матрицы кнопок
 #include "led_matrix.h" // обработка матрицы светодиодов
 
 uchar last_state[ROWCOUNT] = { 0 }; // массив предыдущего состояния матрицы кнопок, строка - байт
@@ -18,9 +18,12 @@ uchar curr_state = 0; // текущее состояние строки матр
 
 uchar midiMsg[4] = { 0x09, 0x90, 0x00, 0x00 }; // MIDI-сообщение. Только Note On. Изменяются 3-4 байты (key и velocity)
 
-uchar leds[ROWCOUNT] = { 0 }; // массив состояния светодиодов
-//uchar lastkey = 0;
-//uchar currkey = 0;
+// массив светодиодов, на каждый по байту. Обрабатывается два бита (4 градации яркости).
+uchar leds[ROWCOUNT][COLCOUNT];
+
+// счетчик вызовов обработки светодиодов, для реализации недо-ШИМ
+uchar tick = 0;
+
 
 /* ------------------------------------------------------------------------- */
 /* ----------------------------- USB interface ----------------------------- */
@@ -101,8 +104,8 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 		uchar row_num = note / COLCOUNT;
 		uchar col_num = note % COLCOUNT;
 
-		if (cin == 0x9) leds[row_num] |= (1<<col_num); // включить бит в матрице
-		if (cin == 0x8) leds[row_num] &= ~(1<<col_num); // выключить бит в матрице
+		if (cin == 0x9) leds[row_num][col_num] = 0b01; // включить 33% test
+		if (cin == 0x8) leds[row_num][col_num] = 0x00; // выключить
 
 	}
 //	if (len > 4) parseUSBMidiMessage(data+4, len-4); предусмотреть потом обработку нескольких миди-сообщений в одном USB,
@@ -189,37 +192,49 @@ int main(void)
 
 	sei();
 
+	// test brightness preset
+	leds[0][0] = 0b00;
+	leds[0][1] = 0b01;
+	leds[1][0] = 0b10;
+	leds[1][1] = 0b11;
+//	tick = 0b00;
+
 	for (;;) {		/* main event loop */
 		wdt_reset();
 		usbPoll();
 
 		for (uchar row_num = 0; row_num < ROWCOUNT; row_num++){
 
-			// матрица светодиодов
-			row_flash(row_num, leds[row_num]);
+			// обработка строки матрицы светодиодов
+			row_flash(row_num, &(leds[row_num][0]), tick);
+
+			// tick - для реализации недо-ШИМ управления яркостью
+			tick++;
+			if (tick == 127) tick = 0;
 
 			// сканирование матрицы кнопок
 			curr_state = row_scan(row_num);
-			if (curr_state == last_state[row_num]) continue;
+			if (curr_state == last_state[row_num]) continue; // ничего не изменилось
 
-			for (uchar bit = 0; bit < COLCOUNT; bit++){
+			for (uchar bit = 0; bit < COLCOUNT; bit++){	// если состояние изменилось, пройти по битам строки
 
 				uchar curr_bit = (curr_state >> bit) & 1;
 				uchar last_bit = (last_state[row_num] >> bit) & 1;
 
-				if ( curr_bit == last_bit ) continue;
+				if ( curr_bit == last_bit ) continue; // если текущий бит не изменился, к следующем
 
+				// если новый бит 1 - нажатие (vel 7f), иначе - отпускание (vel 00)кнопки
 				if ( curr_bit ) midiMsg[3] = 0x7f;
 				else midiMsg[3] = 0x00;
 
-				midiMsg[2] = bit + row_num * COLCOUNT;
+				midiMsg[2] = bit + row_num * COLCOUNT; // нота
 
-				if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4);
+				if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4); // отправка хосту
 
-				_delay_ms(10);
+				_delay_ms(1);
 			}
 
-			last_state[row_num] = curr_state;
+			last_state[row_num] = curr_state; // фиксация текущего состояния строки
 
 		}
 

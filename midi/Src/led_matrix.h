@@ -73,13 +73,28 @@ void all_cols_high(void){
 }
 
 
-void row_flash(char row_num, char row_byte){
+void row_flash(char row_num, unsigned char *row, unsigned char tick){
 
 	all_rows_off();
 	all_cols_high();
 	led_row_on(row_num);
 
-	for (char bit = 0; bit < COLCOUNT; bit++) if (row_byte & (1<<bit)) led_col_low(bit);
+	for (unsigned char led = 0; led < COLCOUNT; led++){
+
+		unsigned char brightness = (*(row+led));
+		brightness &= 0b11;
+
+		/* тут такая кустарная ШИМ. tick - счетчик вызова row_flash,
+		 * инкрементируется в main. Сбрасывается по достижению 127.
+		 * Частота, вроде, приличная получается */
+
+		switch (brightness){
+
+			case 0b11: led_col_low(led); break; //max
+			case 0b10: if ( tick < 6 ) led_col_low(led); break; //mid
+			case 0b01: if ( tick < 2 ) led_col_low(led); break; //low
+		}
+	}
 
 	// гашение происходит при следующем вызове row_flash
 
