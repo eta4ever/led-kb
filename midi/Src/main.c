@@ -13,6 +13,8 @@
 
 #include "led_matrix.h" // обработка матрицы светодиодов
 
+#define NOTE_OFFSET 0x00 // смещение номера ноты относительно 0
+
 uchar last_state[ROWCOUNT] = { 0 }; // массив предыдущего состояния матрицы кнопок, строка - байт
 uchar curr_state = 0; // текущее состояние строки матрицы кнопок
 
@@ -99,12 +101,18 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 	uchar cin = (*data) & 0x0f; // игнор старшего полубайта, нужен только младший
 	if (( cin == 0x9 ) || ( cin == 0x8 )) {
 
-		uchar note = (*(data + 2)) - 0x30; // 30 для midiox TEST!!!
-	//	uchar vel = (*(data + 3)); пока не используется
+		uchar note = (*(data + 2)) - NOTE_OFFSET; // нота
+		uchar vel = (*(data + 3)); // от принятой vel зависит яркость зажигания светодиода
 		uchar row_num = note / COLCOUNT;
 		uchar col_num = note % COLCOUNT;
 
-		if (cin == 0x9) leds[row_num][col_num] = 0b01; // включить 33% test
+		uchar brightness = 0; 
+
+		if (vel == 127) brightness = 0b11; // max
+		else if (vel > 63) brightness = 0b10; // mid
+			else if (vel > 0) brightness = 0b01; // low
+
+		if (cin == 0x9) leds[row_num][col_num] = brightness; // включить
 		if (cin == 0x8) leds[row_num][col_num] = 0x00; // выключить
 
 	}
@@ -186,7 +194,7 @@ DDRD &= ~( (1<<PD3)|(1<<PD1) );
 int main(void)
 {
 	wdt_enable(WDTO_1S);
-//	hardwareInit();
+//	hardwareInit(); // за что отвечает - ваще хз. Но по портам мешается.
 	odDebugInit();
 	usbInit();
 	ports_init();
@@ -230,7 +238,7 @@ int main(void)
 				if ( curr_bit ) midiMsg[3] = 0x7f;
 				else midiMsg[3] = 0x00;
 
-				midiMsg[2] = bit + row_num * COLCOUNT + 0x30; // нота, +30 для midiox ТЕСТ!!!
+				midiMsg[2] = bit + row_num * COLCOUNT + NOTE_OFFSET; // нота
 
 				if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4); // отправка хосту
 
