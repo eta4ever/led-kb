@@ -99,7 +99,7 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 	uchar cin = (*data) & 0x0f; // игнор старшего полубайта, нужен только младший
 	if (( cin == 0x9 ) || ( cin == 0x8 )) {
 
-		uchar note = (*(data + 2));
+		uchar note = (*(data + 2)) - 0x30; // 30 для midiox TEST!!!
 	//	uchar vel = (*(data + 3)); пока не используется
 		uchar row_num = note / COLCOUNT;
 		uchar col_num = note % COLCOUNT;
@@ -230,7 +230,7 @@ int main(void)
 				if ( curr_bit ) midiMsg[3] = 0x7f;
 				else midiMsg[3] = 0x00;
 
-				midiMsg[2] = bit + row_num * COLCOUNT; // нота
+				midiMsg[2] = bit + row_num * COLCOUNT + 0x30; // нота, +30 для midiox ТЕСТ!!!
 
 				if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4); // отправка хосту
 
