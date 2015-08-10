@@ -33,21 +33,21 @@ C_DEPS += \
 usbdrv/%.o: ../usbdrv/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: AVR Compiler'
-	avr-gcc -I"E:\eclipse workspace\midi\usbdrv" -Wall -Os -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega8 -DF_CPU=16000000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -c -o "$@" "$<"
+	avr-gcc -I"D:\eclipse workspace\midi\usbdrv" -I"d:\avr\toolchain\lib\gcc\avr\4.8.1\include" -I"d:\avr\toolchain\lib\gcc\avr\4.8.1\include-fixed" -I"d:\avr\toolchain\avr\include" -Wall -Os -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega8 -DF_CPU=16000000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
 usbdrv/%.o: ../usbdrv/%.S
 	@echo 'Building file: $<'
 	@echo 'Invoking: AVR Assembler'
-	avr-gcc -x assembler-with-cpp -I"E:\eclipse workspace\midi\usbdrv" -mmcu=atmega8 -DF_CPU=16000000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -c -o "$@" "$<"
+	avr-gcc -x assembler-with-cpp -I"D:\eclipse workspace\midi\usbdrv" -I"d:\avr\toolchain\lib\gcc\avr\4.8.1\include" -I"d:\avr\toolchain\lib\gcc\avr\4.8.1\include-fixed" -I"d:\avr\toolchain\avr\include" -mmcu=atmega8 -DF_CPU=16000000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
 usbdrv/%.o: ../usbdrv/%.asm
 	@echo 'Building file: $<'
 	@echo 'Invoking: AVR Assembler'
-	avr-gcc -x assembler-with-cpp -I"E:\eclipse workspace\midi\usbdrv" -mmcu=atmega8 -DF_CPU=16000000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -c -o "$@" "$<"
+	avr-gcc -x assembler-with-cpp -I"D:\eclipse workspace\midi\usbdrv" -I"d:\avr\toolchain\lib\gcc\avr\4.8.1\include" -I"d:\avr\toolchain\lib\gcc\avr\4.8.1\include-fixed" -I"d:\avr\toolchain\avr\include" -mmcu=atmega8 -DF_CPU=16000000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

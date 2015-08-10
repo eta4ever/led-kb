@@ -17,7 +17,7 @@ C_DEPS += \
 Src/%.o: ../Src/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: AVR Compiler'
-	avr-gcc -I"E:\eclipse workspace\midi\usbdrv" -Wall -Os -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega8 -DF_CPU=16000000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -c -o "$@" "$<"
+	avr-gcc -I"D:\eclipse workspace\midi\usbdrv" -I"d:\avr\toolchain\lib\gcc\avr\4.8.1\include" -I"d:\avr\toolchain\lib\gcc\avr\4.8.1\include-fixed" -I"d:\avr\toolchain\avr\include" -Wall -Os -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega8 -DF_CPU=16000000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

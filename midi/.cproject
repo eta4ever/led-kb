@@ -27,6 +27,9 @@
 								<option id="de.innot.avreclipse.assembler.option.debug.level.777319565" name="Generate Debugging Info" superClass="de.innot.avreclipse.assembler.option.debug.level"/>
 								<option id="de.innot.avreclipse.asm.option.include.paths.865883400" name="#include paths for preprocessor(-I)" superClass="de.innot.avreclipse.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/midi/usbdrv}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;d:\avr\toolchain\lib\gcc\avr\4.8.1\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;d:\avr\toolchain\lib\gcc\avr\4.8.1\include-fixed&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;d:\avr\toolchain\avr\include&quot;"/>
 								</option>
 								<inputType id="de.innot.avreclipse.tool.assembler.input.91493808" superClass="de.innot.avreclipse.tool.assembler.input"/>
 							</tool>
@@ -35,6 +38,9 @@
 								<option id="de.innot.avreclipse.compiler.option.optimize.887203443" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize"/>
 								<option id="de.innot.avreclipse.compiler.option.incpath.2103687235" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/midi/usbdrv}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;d:\avr\toolchain\lib\gcc\avr\4.8.1\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;d:\avr\toolchain\lib\gcc\avr\4.8.1\include-fixed&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;d:\avr\toolchain\avr\include&quot;"/>
 								</option>
 								<inputType id="de.innot.avreclipse.compiler.winavr.input.1817483318" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
 							</tool>
@@ -90,6 +96,9 @@
 								<option id="de.innot.avreclipse.assembler.option.debug.level.1207494126" name="Generate Debugging Info" superClass="de.innot.avreclipse.assembler.option.debug.level" value="de.innot.avreclipse.assembler.option.debug.level.none" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.asm.option.include.paths.1380347135" name="#include paths for preprocessor(-I)" superClass="de.innot.avreclipse.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/midi/usbdrv}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;d:\avr\toolchain\lib\gcc\avr\4.8.1\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;d:\avr\toolchain\lib\gcc\avr\4.8.1\include-fixed&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;d:\avr\toolchain\avr\include&quot;"/>
 								</option>
 								<inputType id="de.innot.avreclipse.tool.assembler.input.743483101" superClass="de.innot.avreclipse.tool.assembler.input"/>
 							</tool>
@@ -98,6 +107,9 @@
 								<option id="de.innot.avreclipse.compiler.option.optimize.463889776" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize" value="de.innot.avreclipse.compiler.optimize.size" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.compiler.option.incpath.638951901" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/midi/usbdrv}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;d:\avr\toolchain\lib\gcc\avr\4.8.1\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;d:\avr\toolchain\lib\gcc\avr\4.8.1\include-fixed&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;d:\avr\toolchain\avr\include&quot;"/>
 								</option>
 								<inputType id="de.innot.avreclipse.compiler.winavr.input.531280136" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
 							</tool>

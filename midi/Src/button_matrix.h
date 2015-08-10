@@ -1,10 +1,8 @@
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 // Сканирование матрицы кнопок. ROW+
-
-#define ROWCOUNT 2
-#define COLCOUNT 2
-
+#define ROWCOUNT 4
+#define COLCOUNT 5
 // сканирование строки
 		/* Для сканирования матрицы кнопок. ROW+
 		 * ROW0 PB4
@@ -51,7 +49,7 @@ char row_scan(char row_num){
 	if (PINC & (1<<PC2)) row_byte |= (1<<1);
 	if (PINC & (1<<PC4)) row_byte |= (1<<2);
 	if (PIND & (1<<PD3)) row_byte |= (1<<3);
-	if (PINC & (1<<PD1)) row_byte |= (1<<4);
+	if (PIND & (1<<PD1)) row_byte |= (1<<4);
 
 	row_off(row_num);
 

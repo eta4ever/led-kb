@@ -141,7 +141,9 @@ static void hardwareInit(void)
 #else
 	USBDDR = 0;		/*  remove USB reset condition */
 #endif
+}
 
+void ports_init(void){
 	/* Для отжигания матрицей светодиодов. ROW+
 	 * ROW0 PC0
 	 * ROW1 PB3
@@ -184,19 +186,20 @@ DDRD &= ~( (1<<PD3)|(1<<PD1) );
 int main(void)
 {
 	wdt_enable(WDTO_1S);
-	hardwareInit();
+//	hardwareInit();
 	odDebugInit();
 	usbInit();
+	ports_init();
 
 	sendEmptyFrame = 0;
 
 	sei();
 
 	// test brightness preset
-	leds[0][0] = 0b00;
-	leds[0][1] = 0b01;
-	leds[1][0] = 0b10;
-	leds[1][1] = 0b11;
+//	leds[0][0] = 0b00;
+//	leds[0][1] = 0b01;
+//	leds[1][0] = 0b10;
+//	leds[1][1] = 0b11;
 //	tick = 0b00;
 
 	for (;;) {		/* main event loop */
