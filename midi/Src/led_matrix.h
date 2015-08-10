@@ -80,6 +80,9 @@ void all_cols_low(void){
 
 void row_flash(char row_num, unsigned char *row, unsigned char tick){
 
+	// По ходу, светодиоды впаял наоборот. Получилось, что
+	// на строках активный низкий уровень, на столбцах - высокий
+
 	all_rows_high();
 	all_cols_low();
 
@@ -94,14 +97,14 @@ void row_flash(char row_num, unsigned char *row, unsigned char tick){
 		 * инкрементируется в main. Сбрасывается по достижению 127.
 		 * Частота, вроде, приличная получается */
 
-//		switch (brightness){
-//
-//			case 0b11: led_col_high(led); break; //max
-//			case 0b10: if ( tick < 6 ) led_col_high(led); break; //mid
-//			case 0b01: if ( tick < 2 ) led_col_high(led); break; //low
-//		}
+		switch (brightness){
 
-		if (brightness !=0) led_col_high(led);
+			case 0b11: led_col_high(led); break; //max
+			case 0b10: if ( tick < 6 ) led_col_high(led); break; //mid
+			case 0b01: if ( tick < 2 ) led_col_high(led); break; //low
+		}
+
+		// if (brightness !=0) led_col_high(led);
 	}
 
 	// гашение происходит при следующем вызове row_flash
