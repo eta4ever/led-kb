@@ -140,7 +140,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x9d4
+.text           0x00000000      0xa16
  *(.vectors)
  .vectors       0x00000000       0x26 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr4/crtm8.o
                 0x00000000                __vector_default
@@ -281,87 +281,87 @@ END GROUP
                 0x000007a0       0x12 ./Src/main.o
                 0x000007a0                all_cols_low
  .text.row_flash
-                0x000007b2       0x50 ./Src/main.o
+                0x000007b2       0x6c ./Src/main.o
                 0x000007b2                row_flash
  .text.usbFunctionDescriptor
-                0x00000802       0x28 ./Src/main.o
-                0x00000802                usbFunctionDescriptor
+                0x0000081e       0x28 ./Src/main.o
+                0x0000081e                usbFunctionDescriptor
  .text.usbFunctionSetup
-                0x0000082a       0x1a ./Src/main.o
-                0x0000082a                usbFunctionSetup
+                0x00000846       0x1a ./Src/main.o
+                0x00000846                usbFunctionSetup
  .text.usbFunctionRead
-                0x00000844       0x14 ./Src/main.o
-                0x00000844                usbFunctionRead
+                0x00000860       0x14 ./Src/main.o
+                0x00000860                usbFunctionRead
  .text.usbFunctionWrite
-                0x00000858        0x4 ./Src/main.o
-                0x00000858                usbFunctionWrite
+                0x00000874        0x4 ./Src/main.o
+                0x00000874                usbFunctionWrite
  .text.usbFunctionWriteOut
-                0x0000085c       0x3e ./Src/main.o
-                0x0000085c                usbFunctionWriteOut
+                0x00000878       0x68 ./Src/main.o
+                0x00000878                usbFunctionWriteOut
  .text.ports_init
-                0x0000089a       0x2a ./Src/main.o
-                0x0000089a                ports_init
+                0x000008e0       0x2a ./Src/main.o
+                0x000008e0                ports_init
  .text.startup.main
-                0x000008c4       0xf4 ./Src/main.o
-                0x000008c4                main
+                0x0000090a       0xf0 ./Src/main.o
+                0x0000090a                main
  .text.libgcc.mul
-                0x000009b8        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
+                0x000009fa        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
  .text.libgcc.div
-                0x000009b8       0x18 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
-                0x000009b8                __udivmodqi4
- .text.libgcc   0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
+                0x000009fa       0x18 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
+                0x000009fa                __udivmodqi4
+ .text.libgcc   0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
  .text.libgcc.prologue
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
  .text.libgcc.builtins
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
  .text.libgcc.fmul
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
  .text.libgcc.fixed
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_udivmodqi4.o)
  .text.libgcc.mul
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  .text.libgcc.div
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
- .text.libgcc   0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+ .text.libgcc   0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  .text.libgcc.prologue
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  .text.libgcc.builtins
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  .text.libgcc.fmul
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  .text.libgcc.fixed
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  .text.libgcc.mul
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.div
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
- .text.libgcc   0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+ .text.libgcc   0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.prologue
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.builtins
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.fmul
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.fixed
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_copy_data.o)
  .text.libgcc.mul
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.div
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
- .text.libgcc   0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+ .text.libgcc   0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.prologue
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.builtins
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.fmul
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
  .text.libgcc.fixed
-                0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
-                0x000009d0                . = ALIGN (0x2)
+                0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_clear_bss.o)
+                0x00000a12                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x000009d0        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
-                0x000009d0                _exit
-                0x000009d0                exit
+ .fini9         0x00000a12        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+                0x00000a12                _exit
+                0x00000a12                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -380,11 +380,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x000009d0        0x4 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
+ .fini0         0x00000a12        0x4 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/avr4\libgcc.a(_exit.o)
  *(.fini0)
-                0x000009d4                _etext = .
+                0x00000a16                _etext = .
 
-.data           0x00800060        0x6 load address 0x000009d4
+.data           0x00800060        0x6 load address 0x00000a16
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800060        0x0 d:/avr/toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr4/crtm8.o
@@ -452,8 +452,8 @@ END GROUP
  COMMON         0x008000a4       0x14 ./Src/main.o
                 0x008000a4                leds
                 0x008000b8                PROVIDE (__bss_end, .)
-                0x000009d4                __data_load_start = LOADADDR (.data)
-                0x000009da                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x00000a16                __data_load_start = LOADADDR (.data)
+                0x00000a1c                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x008000b8        0x0
                 0x008000b8                PROVIDE (__noinit_start, .)
