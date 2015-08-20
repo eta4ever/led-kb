@@ -240,9 +240,11 @@ int main(void)
 
 				midiMsg[2] = bit + row_num * COLCOUNT + NOTE_OFFSET; // нота
 
+				while (!(usbInterruptIsReady())) _delay_us(100); // ждать порт
+
 				if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4); // отправка хосту
 
-				_delay_ms(1);
+				_delay_us(100);
 			}
 
 			last_state[row_num] = curr_state; // фиксация текущего состояния строки
