@@ -1,9 +1,9 @@
 #include <avr/io.h>
 #include <avr/pgmspace.h>
-// Отжигание светодиодами. ROW+
+// РћС‚Р¶РёРіР°РЅРёРµ СЃРІРµС‚РѕРґРёРѕРґР°РјРё. ROW+
 #define ROWCOUNT 4
 #define COLCOUNT 5
-		/* Для отжигания матрицей светодиодов. ROW+
+		/* Р”Р»СЏ РѕС‚Р¶РёРіР°РЅРёСЏ РјР°С‚СЂРёС†РµР№ СЃРІРµС‚РѕРґРёРѕРґРѕРІ. ROW+
 		 * ROW0 PC0
 		 * ROW1 PB3
 		 * ROW2 PB1
@@ -16,9 +16,9 @@
 		 * COL4 PD0
 		 */
 
-// разные порты-пины херово объединяются в структуры. Короче, пока ниасилил.
+// СЂР°Р·РЅС‹Рµ РїРѕСЂС‚С‹-РїРёРЅС‹ С…РµСЂРѕРІРѕ РѕР±СЉРµРґРёРЅСЏСЋС‚СЃСЏ РІ СЃС‚СЂСѓРєС‚СѓСЂС‹. РљРѕСЂРѕС‡Рµ, РїРѕРєР° РЅРёР°СЃРёР»РёР».
 
-// высокий уровень на пине строки
+// РІС‹СЃРѕРєРёР№ СѓСЂРѕРІРµРЅСЊ РЅР° РїРёРЅРµ СЃС‚СЂРѕРєРё
 void led_row_high(char row_num){
 	switch (row_num){
 		case 0: PORTC |= (1<<PC0); break;
@@ -28,7 +28,7 @@ void led_row_high(char row_num){
 	}
 }
 
-// низкий уровень на пине строки
+// РЅРёР·РєРёР№ СѓСЂРѕРІРµРЅСЊ РЅР° РїРёРЅРµ СЃС‚СЂРѕРєРё
 void led_row_low(char row_num){
 	switch (row_num){
 		case 0: PORTC &= ~(1<<PC0); break;
@@ -38,7 +38,7 @@ void led_row_low(char row_num){
 	}
 }
 
-// гашение всех строк
+// РіР°С€РµРЅРёРµ РІСЃРµС… СЃС‚СЂРѕРє
 void all_rows_low(void){
 	for (char row_num = 0; row_num < ROWCOUNT; row_num++) led_row_low(row_num);
 }
@@ -68,7 +68,7 @@ void led_col_high(char col_num){
 	}
 }
 
-// гашение столбцов
+// РіР°С€РµРЅРёРµ СЃС‚РѕР»Р±С†РѕРІ
 void all_cols_high(void){
 	for (char col_num = 0; col_num < COLCOUNT; col_num++) led_col_high(col_num);
 }
@@ -80,8 +80,8 @@ void all_cols_low(void){
 
 void row_flash(char row_num, unsigned char *row, unsigned char tick){
 
-	// По ходу, светодиоды впаял наоборот. Получилось, что
-	// на строках активный низкий уровень, на столбцах - высокий
+	// РџРѕ С…РѕРґСѓ, СЃРІРµС‚РѕРґРёРѕРґС‹ РІРїР°СЏР» РЅР°РѕР±РѕСЂРѕС‚. РџРѕР»СѓС‡РёР»РѕСЃСЊ, С‡С‚Рѕ
+	// РЅР° СЃС‚СЂРѕРєР°С… Р°РєС‚РёРІРЅС‹Р№ РЅРёР·РєРёР№ СѓСЂРѕРІРµРЅСЊ, РЅР° СЃС‚РѕР»Р±С†Р°С… - РІС‹СЃРѕРєРёР№
 
 	all_rows_high();
 	all_cols_low();
@@ -93,21 +93,21 @@ void row_flash(char row_num, unsigned char *row, unsigned char tick){
 		unsigned char brightness = (*(row+led));
 		brightness &= 0b11;
 
-		/* тут такая кустарная ШИМ. tick - счетчик вызова row_flash,
-		 * инкрементируется в main. Сбрасывается по достижению 127.
-		 * Частота, вроде, приличная получается */
+		/* С‚СѓС‚ С‚Р°РєР°СЏ РєСѓСЃС‚Р°СЂРЅР°СЏ РЁРРњ. tick - СЃС‡РµС‚С‡РёРє РІС‹Р·РѕРІР° row_flash,
+		 * РёРЅРєСЂРµРјРµРЅС‚РёСЂСѓРµС‚СЃСЏ РІ main. РЎР±СЂР°СЃС‹РІР°РµС‚СЃСЏ РїРѕ РґРѕСЃС‚РёР¶РµРЅРёСЋ 127.
+		 * Р§Р°СЃС‚РѕС‚Р°, РІСЂРѕРґРµ, РїСЂРёР»РёС‡РЅР°СЏ РїРѕР»СѓС‡Р°РµС‚СЃСЏ */
 
 		switch (brightness){
 
 			case 0b11: led_col_high(led); break; //max
-			case 0b10: if ( tick < 6 ) led_col_high(led); break; //mid
+			case 0b10: if ( tick < 15 ) led_col_high(led); break; //mid
 			case 0b01: if ( tick < 2 ) led_col_high(led); break; //low
 		}
 
 		// if (brightness !=0) led_col_high(led);
 	}
 
-	// гашение происходит при следующем вызове row_flash
+	// РіР°С€РµРЅРёРµ РїСЂРѕРёСЃС…РѕРґРёС‚ РїСЂРё СЃР»РµРґСѓСЋС‰РµРј РІС‹Р·РѕРІРµ row_flash
 
 }
 
