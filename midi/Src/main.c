@@ -15,8 +15,14 @@
 
 #define NOTE_OFFSET 0x00 // смещение номера ноты относительно 0
 
+#define DEBOUNCE_LIMIT 2000 // состояние кнопки фиксируется, если оно неизменно в течение
+						 // этого количества тактов опроса матрицы
+
 uchar last_state[ROWCOUNT] = { 0 }; // массив предыдущего состояния матрицы кнопок, строка - байт
 uchar curr_state = 0; // текущее состояние строки матрицы кнопок
+
+int debounce[ROWCOUNT][COLCOUNT] = { 0 }; // для каждой кнопки счетчик тактов опроса. Используется для
+									// подавления дребезга
 
 uchar midiMsg[4] = { 0x09, 0x90, 0x00, 0x00 }; // MIDI-сообщение. Только Note On. Изменяются 3-4 байты (key и velocity)
 
@@ -194,7 +200,7 @@ DDRD &= ~( (1<<PD3)|(1<<PD1) );
 int main(void)
 {
 	wdt_enable(WDTO_1S);
-//	hardwareInit(); // за что отвечает - ваще хз. Но по портам мешается.
+//	hardwareInit(); // за что отвечает - ваще хз. Но по портам мешается. Вроде для управления подтяжкой, а может еще для чего
 	odDebugInit();
 	usbInit();
 	ports_init();
@@ -223,28 +229,44 @@ int main(void)
 			tick++;
 			if (tick == 127) tick = 0;
 
-			// сканирование матрицы кнопок
-			curr_state = row_scan(row_num);
-			if (curr_state == last_state[row_num]) continue; // ничего не изменилось
+			// -------------------------------сканирование матрицы кнопок-------------------------
+			curr_state = row_scan(row_num); // получение текущего состояния строки
 
-			for (uchar bit = 0; bit < COLCOUNT; bit++){	// если состояние изменилось, пройти по битам строки
+			// если состояние не изменилось, инкремент debounce для всей строки и переход к следующей
+			if (curr_state == last_state[row_num]) {
+				for (uchar col_num=0; col_num < COLCOUNT; col_num++){
+					if (debounce[row_num][col_num] < DEBOUNCE_LIMIT) debounce[row_num][col_num]++;
+				}
+				continue;
+			}
 
-				uchar curr_bit = (curr_state >> bit) & 1;
-				uchar last_bit = (last_state[row_num] >> bit) & 1;
+			// состояние изменилось, пройти по элементам строки
+			for (uchar col_num=0; col_num < COLCOUNT; col_num++){
 
-				if ( curr_bit == last_bit ) continue; // если текущий бит не изменился, к следующем
+				uchar curr_bit = (curr_state >> col_num) & 1; // бит текущего состояния элемента
+				uchar last_bit = (last_state[row_num] >> col_num) & 1; // бит предыдущего состояния элемента
+
+				// если состояние элемента не изменилось, инкремент debounce для него и переход к следующему
+				if (curr_bit == last_bit){
+					if (debounce[row_num][col_num] < DEBOUNCE_LIMIT) debounce[row_num][col_num]++;
+					continue;
+				}
+
+				// состояние элемента изменилось
+				debounce[row_num][col_num] = 0; // обнуление debounce
 
 				// если новый бит 1 - нажатие (vel 7f), иначе - отпускание (vel 00)кнопки
 				if ( curr_bit ) midiMsg[3] = 0x7f;
 				else midiMsg[3] = 0x00;
 
-				midiMsg[2] = bit + row_num * COLCOUNT + NOTE_OFFSET; // нота
+				midiMsg[2] = col_num + row_num * COLCOUNT + NOTE_OFFSET; // нота
 
-				while (!(usbInterruptIsReady())) _delay_us(100); // ждать порт
-
+//				while (!(usbInterruptIsReady())) _delay_us(100); // ждать порт
+				while (!(usbInterruptIsReady())) _delay_us(1); // ждать порт МИНИМИЗИРУЕМ
 				if (usbInterruptIsReady()) usbSetInterrupt(midiMsg, 4); // отправка хосту
 
-				_delay_us(100);
+//				_delay_us(100); // общая задержка
+				_delay_us(1); // общая задержка МИНИМИЗИРУЕМ
 			}
 
 			last_state[row_num] = curr_state; // фиксация текущего состояния строки
