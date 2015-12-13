@@ -68,20 +68,52 @@ int main(void)
 {
 	SetupHardware();
 
-	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
+	// LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 	GlobalInterruptEnable();
+
+	uint16_t ADC_current = raw_ADC(); // текущее значение АЦП
+	uint16_t ADC_previous = ADC_current; // предыдущее значение АЦП
+	uint8_t ADC_deviation = 30; // порог фиксации изменения АЦП, давить шум
 
 	for (;;)
 	{
-		// CheckJoystickMovement();
 
-		MIDI_EventPacket_t ReceivedMIDIEvent;
-		while (MIDI_Device_ReceiveEventPacket(&Keyboard_MIDI_Interface, &ReceivedMIDIEvent))
+		MIDI_EventPacket_t ReceivedMIDIEvent; // прием
+		
+		// обработка входящих сообщений
+		while (MIDI_Device_ReceiveEventPacket(&Keyboard_MIDI_Interface, &ReceivedMIDIEvent)) 
 		{
-			if ((ReceivedMIDIEvent.Event == MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON)) && (ReceivedMIDIEvent.Data3 > 0))
-			  LEDs_SetAllLEDs(ReceivedMIDIEvent.Data2 > 64 ? LEDS_LED1 : LEDS_LED2);
+			// if ((ReceivedMIDIEvent.Event == MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON)) && (ReceivedMIDIEvent.Data3 > 0))
+			//   LEDs_SetAllLEDs(ReceivedMIDIEvent.Data2 > 64 ? LEDS_LED1 : LEDS_LED2);
+			// else
+			//   LEDs_SetAllLEDs(LEDS_NO_LEDS);
+
+			if (ReceivedMIDIEvent.Event == MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON))
+			{
+				LEDs_SetAllLEDs(LEDS_LED1);
+			}
 			else
-			  LEDs_SetAllLEDs(LEDS_NO_LEDS);
+			{
+				LEDs_SetAllLEDs(LEDS_NO_LEDS);
+			}
+		}
+
+		// обработка потенциометра
+		ADC_current = raw_ADC();
+		if ( abs(ADC_current - ADC_previous) >= ADC_deviation ) // если изменения больше порога
+		{
+			MIDI_EventPacket_t MIDIEvent = (MIDI_EventPacket_t) // сформировать пакет
+			{
+				.Event       = MIDI_EVENT(0, MIDI_COMMAND_CONTROL_CHANGE), // VirtualCable 0
+				.Data1       = MIDI_COMMAND_CONTROL_CHANGE | MIDI_CHANNEL(1),
+				.Data2       = 0b00000001, // контроллер 1
+				.Data3       = ADC_current / 8, // с АЦП приходит 0-1023, а надо выдать 0-127
+			};
+
+			MIDI_Device_SendEventPacket(&Keyboard_MIDI_Interface, &MIDIEvent); // отправить пакет
+			MIDI_Device_Flush(&Keyboard_MIDI_Interface);
+
+			ADC_previous = ADC_current;
 		}
 
 		MIDI_Device_USBTask(&Keyboard_MIDI_Interface);
@@ -92,43 +124,48 @@ int main(void)
 /** Configures the board hardware and chip peripherals for the demo's functionality. */
 void SetupHardware(void)
 {
-#if (ARCH == ARCH_AVR8)
 	/* Disable watchdog if enabled by bootloader/fuses */
 	MCUSR &= ~(1 << WDRF);
 	wdt_disable();
 
 	/* Disable clock division */
 	clock_prescale_set(clock_div_1);
-#elif (ARCH == ARCH_XMEGA)
-	/* Start the PLL to multiply the 2MHz RC oscillator to 32MHz and switch the CPU core to run from it */
-	XMEGACLK_StartPLL(CLOCK_SRC_INT_RC2MHZ, 2000000, F_CPU);
-	XMEGACLK_SetCPUClockSource(CLOCK_SRC_PLL);
-
-	/* Start the 32MHz internal RC oscillator and start the DFLL to increase it to 48MHz using the USB SOF as a reference */
-	XMEGACLK_StartInternalOscillator(CLOCK_SRC_INT_RC32MHZ);
-	XMEGACLK_StartDFLL(CLOCK_SRC_INT_RC32MHZ, DFLL_REF_INT_USBSOF, F_USB);
-
-	PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
-#endif
 
 	/* Hardware Initialization */
-	// Joystick_Init();
 	LEDs_Init();
-	// Buttons_Init();
 	USB_Init();
+
+	// ---------------- настройка АЦП------------------------------------------
+
+	ADMUX &= ~((1 << REFS1)); // REFS0 = 1, REFS1 = 0 - используется AVCC, оно VCC (на Pro Micro)
+	ADMUX |= (1 << REFS0);
+
+	ADMUX &= ~((1 << MUX5) | (1 << MUX4) | (1 << MUX3)); // 000111 - выбор ADC7 без извращений (A0 на Pro Micro)
+	ADMUX |= ((1<< MUX2) | (1<< MUX1) | (1<< MUX0));
+
+	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // 111 делитель 128, частота АЦП 16000/128 = 125 КГц
+	ADCSRA |= (1 << ADEN); // включение АЦП
+}
+
+// считать АЦП
+int raw_ADC(void)
+{
+	ADCSRA |= (1 << ADSC); // начать преобразование
+	while (ADCSRA & (1 << ADSC)); // ждать сброса бита - окончания преобразования
+	return ADC;
 }
 
 
 /** Event handler for the library USB Connection event. */
 void EVENT_USB_Device_Connect(void)
 {
-	LEDs_SetAllLEDs(LEDMASK_USB_ENUMERATING);
+	// LEDs_SetAllLEDs(LEDMASK_USB_ENUMERATING);
 }
 
 /** Event handler for the library USB Disconnection event. */
 void EVENT_USB_Device_Disconnect(void)
 {
-	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
+	// LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 }
 
 /** Event handler for the library USB Configuration Changed event. */
@@ -138,7 +175,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 
 	ConfigSuccess &= MIDI_Device_ConfigureEndpoints(&Keyboard_MIDI_Interface);
 
-	LEDs_SetAllLEDs(ConfigSuccess ? LEDMASK_USB_READY : LEDMASK_USB_ERROR);
+	// LEDs_SetAllLEDs(ConfigSuccess ? LEDMASK_USB_READY : LEDMASK_USB_ERROR);
 }
 
 /** Event handler for the library USB Control Request reception event. */
