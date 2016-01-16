@@ -35,6 +35,9 @@
  */
 
 #include "MIDI.h"
+#include <util/twi.h>
+
+#define F_CPU 16000000UL
 
 /** LUFA MIDI Class driver interface configuration and state information. This structure is
  *  passed to all MIDI Class driver functions, so that multiple instances of the same class
@@ -71,6 +74,10 @@ int main(void)
 	// LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 	GlobalInterruptEnable();
 
+	uint8_t BUT_current = PIND & (1 << PD1);; // текущее значение кнопки
+	uint8_t BUT_previous = BUT_current; // предыдущее значение кнопки
+	//uint8_t LED_current = 0; // текущее значение светодиода
+
 	uint16_t ADC_current = raw_ADC(); // текущее значение АЦП
 	uint16_t ADC_previous = ADC_current; // предыдущее значение АЦП
 	uint8_t ADC_deviation = 30; // порог фиксации изменения АЦП, давить шум
@@ -90,11 +97,13 @@ int main(void)
 
 			if (ReceivedMIDIEvent.Event == MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON))
 			{
-				LEDs_SetAllLEDs(LEDS_LED1);
+				//LEDs_SetAllLEDs(LEDS_LED1);
+				led_on();
 			}
 			else
 			{
-				LEDs_SetAllLEDs(LEDS_NO_LEDS);
+				//LEDs_SetAllLEDs(LEDS_NO_LEDS);
+				led_off();
 			}
 		}
 
@@ -116,6 +125,32 @@ int main(void)
 			ADC_previous = ADC_current;
 		}
 
+		// обработка кнопки
+		else 
+		{
+			BUT_current = PIND & (1 << PD1);
+			if (BUT_current != BUT_previous)
+			{
+				
+				uint8_t vel = 0;
+				if (BUT_previous == (1<<PD1) ) vel = 127;
+
+				MIDI_EventPacket_t MIDIEvent = (MIDI_EventPacket_t) // сформировать пакет
+					{
+						.Event       = MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON), // VirtualCable 0
+						.Data1       = MIDI_COMMAND_NOTE_ON | MIDI_CHANNEL(1),
+						.Data2       = 0b00000001, // контроллер 1
+						.Data3       = vel, 
+					};
+
+				MIDI_Device_SendEventPacket(&Keyboard_MIDI_Interface, &MIDIEvent); // отправить пакет
+				MIDI_Device_Flush(&Keyboard_MIDI_Interface);
+
+				BUT_previous = BUT_current;	
+			}
+
+		}
+
 		MIDI_Device_USBTask(&Keyboard_MIDI_Interface);
 		USB_USBTask();
 	}
@@ -135,6 +170,11 @@ void SetupHardware(void)
 	LEDs_Init();
 	USB_Init();
 
+	// ----------------D2 (PD1) вход кнопки, D3 (PD0) выход на светодиод
+	
+	DDRD &= ~(1 << PD1);
+	DDRD |= (1 << PD0);
+
 	// ---------------- настройка АЦП------------------------------------------
 
 	ADMUX &= ~((1 << REFS1)); // REFS0 = 1, REFS1 = 0 - используется AVCC, оно VCC (на Pro Micro)
@@ -153,6 +193,18 @@ int raw_ADC(void)
 	ADCSRA |= (1 << ADSC); // начать преобразование
 	while (ADCSRA & (1 << ADSC)); // ждать сброса бита - окончания преобразования
 	return ADC;
+}
+
+// зажечь светодиод
+void led_on(void)
+{
+	PORTD |= (1 << PD0);
+}
+
+// погасить светодиод
+void led_off(void)
+{
+	PORTD &= ~(1 << PD0);
 }
 
 
