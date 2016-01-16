@@ -28,12 +28,6 @@
   this software.
 */
 
-/** \file
- *
- *  Main source file for the MIDI demo. This file contains the main tasks of
- *  the demo and is responsible for the initial application hardware configuration.
- */
-
 #include "MIDI.h"
 #include <util/twi.h>
 
@@ -64,9 +58,21 @@ USB_ClassInfo_MIDI_Device_t Keyboard_MIDI_Interface =
 	};
 
 
-/** Main program entry point. This routine contains the overall program flow, including initial
- *  setup of all components and the main program loop.
- */
+/*	MIDI
+
+	Event = MIDI_EVENT(0, MIDI_COMMAND_CONTROL_CHANGE)
+	Собственно, испольуем только MIDI_COMMAND_CONTROL_CHANGE и MIDI_COMMAND_NOTE_ON
+	0 - это Virtual Cable. Это не трогаем. 
+
+	Data1 - байт статуса. xxxxyyyy, где xxxx - команда, yyyy - канал. Пример .Data1 = MIDI_COMMAND_CONTROL_CHANGE | MIDI_CHANNEL(1)
+	Data2-3 - данные. Для NOTE_ON Data2 - номер ноты, Data3 - Velocity. Старший бит всегда 0, поэтому 0-127.
+	Для CC Data2 - номер контроллера (120-127 зарезервированы!), Data3 - значение.
+
+	http://www.midi.org/techspecs/midimessages.php
+
+*/
+
+
 int main(void)
 {
 	SetupHardware();
@@ -95,16 +101,11 @@ int main(void)
 			// else
 			//   LEDs_SetAllLEDs(LEDS_NO_LEDS);
 
-			if (ReceivedMIDIEvent.Event == MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON))
+			if ((ReceivedMIDIEvent.Event == MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON)) && (ReceivedMIDIEvent.Data2 = 0b00000001))
 			{
-				//LEDs_SetAllLEDs(LEDS_LED1);
-				led_on();
+				if (ReceivedMIDIEvent.Data3 == 0) led_on(); else if (ReceivedMIDIEvent.Data3 == 127) led_off();
 			}
-			else
-			{
-				//LEDs_SetAllLEDs(LEDS_NO_LEDS);
-				led_off();
-			}
+
 		}
 
 		// обработка потенциометра
@@ -139,7 +140,7 @@ int main(void)
 					{
 						.Event       = MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON), // VirtualCable 0
 						.Data1       = MIDI_COMMAND_NOTE_ON | MIDI_CHANNEL(1),
-						.Data2       = 0b00000001, // контроллер 1
+						.Data2       = 0b00000001,
 						.Data3       = vel, 
 					};
 
