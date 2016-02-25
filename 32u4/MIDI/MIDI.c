@@ -102,7 +102,12 @@ int main(void)
 			// else
 			//   LEDs_SetAllLEDs(LEDS_NO_LEDS);
 
-			if ((ReceivedMIDIEvent.Event == MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON)) && (ReceivedMIDIEvent.Data2 = 0b00000001))
+			// if ((ReceivedMIDIEvent.Event == MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON)) && (ReceivedMIDIEvent.Data2 = 0b00000001))
+			// {
+			// 	if (ReceivedMIDIEvent.Data3 == 0) led_off(); else if (ReceivedMIDIEvent.Data3 == 127) led_on();
+			// }
+
+			if ((ReceivedMIDIEvent.Event == MIDI_EVENT(0, MIDI_COMMAND_CONTROL_CHANGE)) && (ReceivedMIDIEvent.Data2 == 0b00000001))
 			{
 				if (ReceivedMIDIEvent.Data3 == 0) led_off(); else if (ReceivedMIDIEvent.Data3 == 127) led_on();
 			}
@@ -113,16 +118,18 @@ int main(void)
 		ADC_current = raw_ADC();
 		if ( abs(ADC_current - ADC_previous) >= ADC_deviation ) // если изменения больше порога
 		{
-			MIDI_EventPacket_t MIDIEvent = (MIDI_EventPacket_t) // сформировать пакет
-			{
-				.Event       = MIDI_EVENT(0, MIDI_COMMAND_CONTROL_CHANGE), // VirtualCable 0
-				.Data1       = MIDI_COMMAND_CONTROL_CHANGE | MIDI_CHANNEL(1),
-				.Data2       = 0b00000001, // контроллер 1
-				.Data3       = ADC_current / 8, // с АЦП приходит 0-1023, а надо выдать 0-127
-			};
+			// MIDI_EventPacket_t MIDIEvent = (MIDI_EventPacket_t) // сформировать пакет
+			// {
+			// 	.Event       = MIDI_EVENT(0, MIDI_COMMAND_CONTROL_CHANGE), // VirtualCable 0
+			// 	.Data1       = MIDI_COMMAND_CONTROL_CHANGE | MIDI_CHANNEL(1),
+			// 	.Data2       = 0b00000001, // контроллер 1
+			// 	.Data3       = ADC_current / 8, // с АЦП приходит 0-1023, а надо выдать 0-127
+			// };
 
-			MIDI_Device_SendEventPacket(&Keyboard_MIDI_Interface, &MIDIEvent); // отправить пакет
-			MIDI_Device_Flush(&Keyboard_MIDI_Interface);
+			// MIDI_Device_SendEventPacket(&Keyboard_MIDI_Interface, &MIDIEvent); // отправить пакет
+			// MIDI_Device_Flush(&Keyboard_MIDI_Interface);
+
+			cc_send(0, ADC_current / 8);
 
 			ADC_previous = ADC_current;
 		}
@@ -130,30 +137,13 @@ int main(void)
 		// обработка кнопки
 		else 
 		{
-			// BUT_current = PIND & (1 << PD1);
-			// if (BUT_current != BUT_previous)
-			// {
-				
-			// 	uint8_t vel = 0;
-			// 	if (BUT_previous == (1<<PD1) ) vel = 127;
 
-			// 	MIDI_EventPacket_t MIDIEvent = (MIDI_EventPacket_t) // сформировать пакет
-			// 		{
-			// 			.Event       = MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON), // VirtualCable 0
-			// 			.Data1       = MIDI_COMMAND_NOTE_ON | MIDI_CHANNEL(1),
-			// 			.Data2       = 0b00000001,
-			// 			.Data3       = vel, 
-			// 		};
-
-			// 	MIDI_Device_SendEventPacket(&Keyboard_MIDI_Interface, &MIDIEvent); // отправить пакет
-			// 	MIDI_Device_Flush(&Keyboard_MIDI_Interface);
-
-			// 	BUT_previous = BUT_current;	
-			// }
 			BUT_current = PIND & (1 << PD1);
 			if (BUT_current != BUT_previous) { // по изменению состояния кнопки отправить два сообщения 
-				noteon_send(127);
-				noteon_send(0);
+				// noteon_send(127);
+				// noteon_send(0);
+				cc_send(1,127);
+				cc_send(1,0);
 				BUT_previous = BUT_current;
 			} 
 		}
@@ -178,6 +168,20 @@ void noteon_send(vel)
 	MIDI_Device_Flush(&Keyboard_MIDI_Interface);
 }
 
+// отправить в кабель 0 инструмент instr CONTROL CHANGE с заданным vel
+void cc_send(instr, vel)
+{
+	MIDI_EventPacket_t MIDIEvent = (MIDI_EventPacket_t) // сформировать пакет
+			{
+				.Event       = MIDI_EVENT(0, MIDI_COMMAND_CONTROL_CHANGE), // VirtualCable 0
+				.Data1       = MIDI_COMMAND_CONTROL_CHANGE | MIDI_CHANNEL(1), // канал 1
+				.Data2       = instr, 
+				.Data3       = vel, 
+			};
+
+			MIDI_Device_SendEventPacket(&Keyboard_MIDI_Interface, &MIDIEvent); // отправить пакет
+			MIDI_Device_Flush(&Keyboard_MIDI_Interface);
+}
 
 /** Configures the board hardware and chip peripherals for the demo's functionality. */
 void SetupHardware(void)
