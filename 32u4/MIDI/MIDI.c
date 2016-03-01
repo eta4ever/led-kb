@@ -129,7 +129,7 @@ int main(void)
 			// MIDI_Device_SendEventPacket(&Keyboard_MIDI_Interface, &MIDIEvent); // отправить пакет
 			// MIDI_Device_Flush(&Keyboard_MIDI_Interface);
 
-			cc_send(0, ADC_current / 8);
+			cc_send(2, ADC_current / 8);
 
 			ADC_previous = ADC_current;
 		}
@@ -139,11 +139,10 @@ int main(void)
 		{
 
 			BUT_current = PIND & (1 << PD1);
-			if (BUT_current != BUT_previous) { // по изменению состояния кнопки отправить два сообщения 
+			if (BUT_current != BUT_previous) { // по первому нажатию CC#1 127, по второму 0 
 				// noteon_send(127);
 				// noteon_send(0);
-				cc_send(1,127);
-				cc_send(1,0);
+				if (BUT_current) { cc_send(1,127); } else { cc_send(1,0); }
 				BUT_previous = BUT_current;
 			} 
 		}
