@@ -89,7 +89,7 @@ int main(void)
 	uint16_t ADC_previous[16]; // предыдущие значения АЦП
 	uint8_t ADC_deviation = 7; // порог фиксации изменения АЦП, давить шум
 
-	for (uint8_t i=0; i<16, i++) { ADC_current[i] = 0; ADC_previous[i] = 0;} // обнуление
+	for (uint8_t i=0; i<16; i++) { ADC_current[i] = 0; ADC_previous[i] = 0;} // обнуление
 
 	for (;;)
 	{
@@ -144,10 +144,10 @@ void cc_send(instr, vel)
 /** установить адрес входа мультиплексора */
 void MUX_address(uint8_t address)
 {
-	if (address & 0b0001) PORTF |= (1<<PF4) else PORTF &= ~(1<<PF4);
-	if (address & 0b0010) PORTF |= (1<<PF5) else PORTF &= ~(1<<PF5);
-	if (address & 0b0100) PORTF |= (1<<PF6) else PORTF &= ~(1<<PF6);
-	if (address & 0b1000) PORTF |= (1<<PB6) else PORTF &= ~(1<<PB6);
+	if (address & 0b0001) PORTF |= (1<<PF4); else PORTF &= ~(1<<PF4);
+	if (address & 0b0010) PORTF |= (1<<PF5); else PORTF &= ~(1<<PF5);
+	if (address & 0b0100) PORTF |= (1<<PF6); else PORTF &= ~(1<<PF6);
+	if (address & 0b1000) PORTF |= (1<<PB6); else PORTF &= ~(1<<PB6);
 }
 
 
