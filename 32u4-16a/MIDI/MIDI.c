@@ -80,92 +80,51 @@ int main(void)
 	// LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 	GlobalInterruptEnable();
 
-	uint8_t BUT_current = PIND & (1 << PD1);; // текущее значение кнопки
-	uint8_t BUT_previous = BUT_current; // предыдущее значение кнопки
+	// uint8_t BUT_current = PIND & (1 << PD1);; // текущее значение кнопки
+	// uint8_t BUT_previous = BUT_current; // предыдущее значение кнопки
 	//uint8_t BUT_message=0; // 0 - ничего не отправлять, 1 - отправить vel 0, 2 - отправить vel 127
 	//uint8_t LED_current = 0; // текущее значение светодиода
 
-	uint16_t ADC_current = raw_ADC(); // текущее значение АЦП
-	uint16_t ADC_previous = ADC_current; // предыдущее значение АЦП
+	uint16_t ADC_current[16]; // текущие значения АЦП
+	uint16_t ADC_previous[16]; // предыдущие значения АЦП
 	uint8_t ADC_deviation = 7; // порог фиксации изменения АЦП, давить шум
+
+	for (uint8_t i=0; i<16, i++) { ADC_current[i] = 0; ADC_previous[i] = 0;} // обнуление
 
 	for (;;)
 	{
+		// опрос 16 входов мультиплексора
+		for (uint8_t MUX_pos = 0; MUX_pos < 16; MUX_pos++ ){
 
-		MIDI_EventPacket_t ReceivedMIDIEvent; // прием
-		
-		// обработка входящих сообщений
-		while (MIDI_Device_ReceiveEventPacket(&Keyboard_MIDI_Interface, &ReceivedMIDIEvent)) 
-		{
-			// if ((ReceivedMIDIEvent.Event == MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON)) && (ReceivedMIDIEvent.Data3 > 0))
-			//   LEDs_SetAllLEDs(ReceivedMIDIEvent.Data2 > 64 ? LEDS_LED1 : LEDS_LED2);
-			// else
-			//   LEDs_SetAllLEDs(LEDS_NO_LEDS);
+				MUX_address(MUX_pos); // установить адрес
+				
+				ADC_current[MUX_pos] = raw_ADC(); // АЦП
+				if ( abs(ADC_current[MUX_pos] - ADC_previous[MUX_pos]) >= ADC_deviation ) // если изменения больше порога, отправить сообщение CC
+				{
+					cc_send(2, ADC_current[MUX_pos] / 8);
+					ADC_previous[MUX_pos] = ADC_current[MUX_pos];
+				}
 
-			// if ((ReceivedMIDIEvent.Event == MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON)) && (ReceivedMIDIEvent.Data2 = 0b00000001))
-			// {
-			// 	if (ReceivedMIDIEvent.Data3 == 0) led_off(); else if (ReceivedMIDIEvent.Data3 == 127) led_on();
-			// }
-
-			if ((ReceivedMIDIEvent.Event == MIDI_EVENT(0, MIDI_COMMAND_CONTROL_CHANGE)) && (ReceivedMIDIEvent.Data2 == 0b00000001))
-			{
-				if (ReceivedMIDIEvent.Data3 == 0) led_off(); else if (ReceivedMIDIEvent.Data3 == 127) led_on();
-			}
-
+				MIDI_Device_USBTask(&Keyboard_MIDI_Interface);
+				USB_USBTask();
 		}
-
-		// обработка потенциометра
-		ADC_current = raw_ADC();
-		if ( abs(ADC_current - ADC_previous) >= ADC_deviation ) // если изменения больше порога
-		{
-			// MIDI_EventPacket_t MIDIEvent = (MIDI_EventPacket_t) // сформировать пакет
-			// {
-			// 	.Event       = MIDI_EVENT(0, MIDI_COMMAND_CONTROL_CHANGE), // VirtualCable 0
-			// 	.Data1       = MIDI_COMMAND_CONTROL_CHANGE | MIDI_CHANNEL(1),
-			// 	.Data2       = 0b00000001, // контроллер 1
-			// 	.Data3       = ADC_current / 8, // с АЦП приходит 0-1023, а надо выдать 0-127
-			// };
-
-			// MIDI_Device_SendEventPacket(&Keyboard_MIDI_Interface, &MIDIEvent); // отправить пакет
-			// MIDI_Device_Flush(&Keyboard_MIDI_Interface);
-
-			cc_send(2, ADC_current / 8);
-
-			ADC_previous = ADC_current;
-		}
-
-		// обработка кнопки
-		else 
-		{
-
-			BUT_current = PIND & (1 << PD1);
-			if (BUT_current != BUT_previous) { // по первому нажатию CC#1 127, по второму 0 
-				// noteon_send(127);
-				// noteon_send(0);
-				if (BUT_current) { cc_send(1,127); } else { cc_send(1,0); }
-				BUT_previous = BUT_current;
-			} 
-		}
-
-		MIDI_Device_USBTask(&Keyboard_MIDI_Interface);
-		USB_USBTask();
 	}
 }
 
-// отправить в кабель 0 канал 1 NOTE_ON с заданным vel
-void noteon_send(vel)
-{
-	MIDI_EventPacket_t MIDIEvent = (MIDI_EventPacket_t) // сформировать пакет
-	{
-		.Event       = MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON), // VirtualCable 0
-		.Data1       = MIDI_COMMAND_NOTE_ON | MIDI_CHANNEL(1),
-		.Data2       = 0b00000001,
-		.Data3       = vel, 
-	};
+// // отправить в кабель 0 канал 1 NOTE_ON с заданным vel
+// void noteon_send(vel)
+// {
+// 	MIDI_EventPacket_t MIDIEvent = (MIDI_EventPacket_t) // сформировать пакет
+// 	{
+// 		.Event       = MIDI_EVENT(0, MIDI_COMMAND_NOTE_ON), // VirtualCable 0
+// 		.Data1       = MIDI_COMMAND_NOTE_ON | MIDI_CHANNEL(1),
+// 		.Data2       = 0b00000001,
+// 		.Data3       = vel, 
+// 	};
 
-	MIDI_Device_SendEventPacket(&Keyboard_MIDI_Interface, &MIDIEvent); // отправить пакет
-	MIDI_Device_Flush(&Keyboard_MIDI_Interface);
-}
+// 	MIDI_Device_SendEventPacket(&Keyboard_MIDI_Interface, &MIDIEvent); // отправить пакет
+// 	MIDI_Device_Flush(&Keyboard_MIDI_Interface);
+// }
 
 // отправить в кабель 0 инструмент instr CONTROL CHANGE с заданным vel
 void cc_send(instr, vel)
@@ -182,6 +141,16 @@ void cc_send(instr, vel)
 			MIDI_Device_Flush(&Keyboard_MIDI_Interface);
 }
 
+/** установить адрес входа мультиплексора */
+void MUX_address(uint8_t address)
+{
+	if (address & 0b0001) PORTF |= (1<<PF4) else PORTF &= ~(1<<PF4);
+	if (address & 0b0010) PORTF |= (1<<PF5) else PORTF &= ~(1<<PF5);
+	if (address & 0b0100) PORTF |= (1<<PF6) else PORTF &= ~(1<<PF6);
+	if (address & 0b1000) PORTF |= (1<<PB6) else PORTF &= ~(1<<PB6);
+}
+
+
 /** Configures the board hardware and chip peripherals for the demo's functionality. */
 void SetupHardware(void)
 {
@@ -193,14 +162,20 @@ void SetupHardware(void)
 	clock_prescale_set(clock_div_1);
 
 	/* Hardware Initialization */
-	LEDs_Init();
+	//LEDs_Init();
 	USB_Init();
 
 	// ----------------D2 (PD1) вход кнопки, D3 (PD0) выход на светодиод
-	
-	DDRD &= ~(1 << PD1);
-	DDRD |= (1 << PD0);
+	// PB6, PF6, PF5, PF4 - выходы адреса мультиплексора, PF4-S0 ... PB6-S3
+	// PB5 - выход разрешения мультиплексора (активный низкий)
+	DDRB |= (1<<PB5) | (1<<PB6);
+	DDRF |= (1<<PF6) | (1<<PF5) | (1<<PF4);
 
+	// DDRD &= ~(1 << PD1);
+
+	// разрешить работу мультиплексора
+	PORTB &= ~(1<<PB5);
+	
 	// ---------------- настройка АЦП------------------------------------------
 
 	ADMUX &= ~((1 << REFS1)); // REFS0 = 1, REFS1 = 0 - используется AVCC, оно VCC (на Pro Micro)
@@ -221,17 +196,17 @@ int raw_ADC(void)
 	return ADC;
 }
 
-// зажечь светодиод
-void led_on(void)
-{
-	PORTD |= (1 << PD0);
-}
+// // зажечь светодиод
+// void led_on(void)
+// {
+// 	PORTD |= (1 << PD0);
+// }
 
-// погасить светодиод
-void led_off(void)
-{
-	PORTD &= ~(1 << PD0);
-}
+// // погасить светодиод
+// void led_off(void)
+// {
+// 	PORTD &= ~(1 << PD0);
+// }
 
 
 /** Event handler for the library USB Connection event. */
