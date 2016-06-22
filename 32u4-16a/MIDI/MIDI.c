@@ -101,7 +101,7 @@ int main(void)
 				ADC_current[MUX_pos] = raw_ADC(); // АЦП
 				if ( abs(ADC_current[MUX_pos] - ADC_previous[MUX_pos]) >= ADC_deviation ) // если изменения больше порога, отправить сообщение CC
 				{
-					cc_send(2, ADC_current[MUX_pos] / 8);
+					cc_send(MUX_pos, ADC_current[MUX_pos] / 8);
 					ADC_previous[MUX_pos] = ADC_current[MUX_pos];
 				}
 

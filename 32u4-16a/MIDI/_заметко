@@ -8,4 +8,6 @@ avrdude -c usbasp -p m32u4 -U flash:w:BootloaderCDC.hex
 Загрузка прошивки:
 avrdude -c avr109 -P /dev/ttyACM0 -p m32u4 -U flash:w:MIDI.hex 
 
+avrdude -c avr109 -P COM4 -p m32u4 -U flash:w:MIDI.hex 
+
 Вкл-откл USB - нормальный режим, запуск прошивки. Если в этом режиме сбросить - то будет бутлодер
