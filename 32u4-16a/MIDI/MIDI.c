@@ -29,7 +29,8 @@
 */
 
 #include "MIDI.h"
-#include <util/twi.h>
+// #include <util/twi.h>
+#include <util/delay.h>
 
 #define F_CPU 16000000UL
 
@@ -85,29 +86,48 @@ int main(void)
 	//uint8_t BUT_message=0; // 0 - ничего не отправлять, 1 - отправить vel 0, 2 - отправить vel 127
 	//uint8_t LED_current = 0; // текущее значение светодиода
 
-	uint16_t ADC_current[16]; // текущие значения АЦП
-	uint16_t ADC_previous[16]; // предыдущие значения АЦП
-	uint8_t ADC_deviation = 7; // порог фиксации изменения АЦП, давить шум
+	int ADC_current[16]; // текущие значения АЦП
+	int ADC_previous[16]; // предыдущие значения АЦП
+	uint8_t ADC_deviation = 20; // порог фиксации изменения АЦП, давить шум
 
-	for (uint8_t i=0; i<16; i++) { ADC_current[i] = 0; ADC_previous[i] = 0;} // обнуление
+	for (uint8_t i=0; i<16; i++) { ADC_current[i] = raw_ADC(); ADC_previous[i] = ADC_current[i];} // инициализация
 
 	for (;;)
 	{
+		
+		// дроп входящих
+		MIDI_EventPacket_t ReceivedMIDIEvent; 
+		while (MIDI_Device_ReceiveEventPacket(&Keyboard_MIDI_Interface, &ReceivedMIDIEvent));
+		
 		// опрос 16 входов мультиплексора
-		for (uint8_t MUX_pos = 0; MUX_pos < 16; MUX_pos++ ){
+		for (int MUX_pos = 0; MUX_pos < 3; MUX_pos++ ){
 
 				MUX_address(MUX_pos); // установить адрес
+
+				// _delay_ms(1);
 				
+				// MUX_enable();
+
+				// _delay_ms(1);
+
 				ADC_current[MUX_pos] = raw_ADC(); // АЦП
+
+				// MUX_disable();
+				
 				if ( abs(ADC_current[MUX_pos] - ADC_previous[MUX_pos]) >= ADC_deviation ) // если изменения больше порога, отправить сообщение CC
 				{
 					cc_send(MUX_pos, ADC_current[MUX_pos] / 8);
 					ADC_previous[MUX_pos] = ADC_current[MUX_pos];
 				}
 
+				_delay_ms(10);
+
 				MIDI_Device_USBTask(&Keyboard_MIDI_Interface);
 				USB_USBTask();
 		}
+
+		// MIDI_Device_USBTask(&Keyboard_MIDI_Interface);
+		// USB_USBTask();
 	}
 }
 
@@ -127,7 +147,7 @@ int main(void)
 // }
 
 // отправить в кабель 0 инструмент instr CONTROL CHANGE с заданным vel
-void cc_send(instr, vel)
+void cc_send(int instr, int vel)
 {
 	MIDI_EventPacket_t MIDIEvent = (MIDI_EventPacket_t) // сформировать пакет
 			{
@@ -142,12 +162,12 @@ void cc_send(instr, vel)
 }
 
 /** установить адрес входа мультиплексора */
-void MUX_address(uint8_t address)
+void MUX_address(int address)
 {
 	if (address & 0b0001) PORTF |= (1<<PF4); else PORTF &= ~(1<<PF4);
 	if (address & 0b0010) PORTF |= (1<<PF5); else PORTF &= ~(1<<PF5);
 	if (address & 0b0100) PORTF |= (1<<PF6); else PORTF &= ~(1<<PF6);
-	if (address & 0b1000) PORTF |= (1<<PB6); else PORTF &= ~(1<<PB6);
+	if (address & 0b1000) PORTB |= (1<<PB6); else PORTB &= ~(1<<PB6);
 }
 
 
@@ -162,7 +182,7 @@ void SetupHardware(void)
 	clock_prescale_set(clock_div_1);
 
 	/* Hardware Initialization */
-	//LEDs_Init();
+	LEDs_Init();
 	USB_Init();
 
 	// ----------------D2 (PD1) вход кнопки, D3 (PD0) выход на светодиод
@@ -174,7 +194,7 @@ void SetupHardware(void)
 	// DDRD &= ~(1 << PD1);
 
 	// разрешить работу мультиплексора
-	PORTB &= ~(1<<PB5);
+	MUX_enable()
 	
 	// ---------------- настройка АЦП------------------------------------------
 
@@ -194,6 +214,18 @@ int raw_ADC(void)
 	ADCSRA |= (1 << ADSC); // начать преобразование
 	while (ADCSRA & (1 << ADSC)); // ждать сброса бита - окончания преобразования
 	return ADC;
+}
+
+// разрешить мультиплексор
+void MUX_enable(void)
+{
+	PORTB &= ~(1<<PB5);
+}
+
+// запретить мультиплексор
+void MUX_disable(void)
+{
+	PORTB |= (1<<PB5);
 }
 
 // // зажечь светодиод
